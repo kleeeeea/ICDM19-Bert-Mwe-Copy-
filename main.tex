@@ -1,0 +1,228 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{booktabs} % For formal tables
+
+\usepackage{booktabs} % For formal tables
+\usepackage{pgfplots}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{balance}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{color}
+\usepackage {balance}
+\usepackage{eqparbox}
+\usepackage{mathrsfs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{lipsum}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array, multirow}
+\usepackage{balance}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{bbm}
+\usepackage{bm}
+
+\usepackage{tabularx}
+\usepackage{makecell}
+ %\usepackage{bickham}
+        %\usepackage{boondox-cal}
+        %\usepackage{boondox-calo}
+       % \usepackage{dutchcal}
+
+\captionsetup{skip=0pt}
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newtheorem{Problem}{Problem}
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Definition}{Definition}
+\newtheorem{Corollary}{Corollary}
+\newtheorem{Lemma}{Lemma}
+\newtheorem{Example}{Example}
+\newcommand{\eat}[1]{}
+\newtheorem{Assumption}{Assumption}
+\newcommand{\from}[2]{{\bf [{\sc from #1:} #2]}}
+\newcommand{\C}{\mbox {${\cal C}$}}
+
+\newcommand{\tstart}{\mbox {${T_{start}}$}}
+\newcommand{\tend}{\mbox {${T_{end}}$}}
+
+\definecolor{L_color}{rgb}{0.8,0.2,0.2}
+\definecolor{Y_color}{rgb}{1.0, 0.0, 0.5}
+\newcommand{\LK}[1]{{\color{L_color}  #1}}
+\newcommand{\Yu}[1]{{\color{Y_color} [Yu: #1]}}
+\newcommand{\nop}[1]{}
+\newcolumntype{Z}{ >{\centering\arraybackslash}X }
+
+\newcommand{\algorithmicinput}{\textbf{Input:} }
+\newcommand{\algorithmicoutput}{\textbf{Output:} }
+\newcommand{\BertMWE}{\mbox{\sf Bert-MWE}\xspace}
+\newtheorem{Principle}{Principle}
+
+
+
+\newcommand{\red}[1]{\textcolor{BrickRed}{#1}}
+\newcommand{\orange}[1]{\textcolor{BurntOrange}{#1}}
+\newcommand{\green}[1]{\textcolor{OliveGreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{MidnightBlue}{#1}}
+\newcommand{\gray}[1]{\textcolor{black!60}{#1}}
+
+\DeclareRobustCommand{\mb}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator*{\diag}{diag}
+
+\newcommand\dif{\mathop{}\!\mathrm{d}}
+
+\newcommand{\bm}{\mathbf{m}}
+\newcommand{\bs}{\mathbf{s}}
+
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\balpha}{\mb{\alpha}}
+\newcommand{\bbeta}{\mb{\beta}}
+\newcommand{\bmu}{\mb{\mu}}
+\newcommand{\bsigma}{\mb{\sigma}}
+\newcommand{\btheta}{\mb{\theta}}
+\newcommand{\blambda}{\mb{\lambda}}
+\newcommand{\bgamma}{\mb{\gamma}}
+\newcommand{\bphi}{\mb{\phi}}
+\newcommand{\btau}{\mb{\tau}}
+\newcommand{\bvarphi}{\mb{\varphi}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\ELBO}{\textsc{elbo}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\mathcalD}{\mathcal{D}}
+
+\newcommand{\g}{\,\vert\,}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\EE}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\EEE}[2]{\mathbb{E}_{#1}\left[#2\right]}
+\newcommand{\kl}[1]{\textsc{kl}\left(#1\right)}
+\newcommand{\vct}[1]{\textbf{#1}}
+\newcommand{\realline}{\mathbb{R}}
+\newcommand{\indpt}{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\h}[1]{\textrm{H}\left( #1 \right)}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\new}{\textrm{new}}
+\newcommand{\mult}{\textrm{Mult}}
+\newcommand{\Dir}{\textrm{Dir}}
+\newcommand{\discrete}{\textrm{Discrete}}
+\newcommand{\Bern}{\textrm{Bern}}
+\newcommand{\DP}{\textrm{DP}}
+\newcommand{\GP}{\textrm{GP}}
+\newcommand{\Bet}{\textrm{Beta}}
+\newcommand{\const}{\mathrm{const}}
+\newcommand{\pois}{\textrm{Pois}}
+
+\newcommand{\ddx}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\dfdx}[2]{\textstyle \frac{\partial #1}{\partial #2}}
+
+\newcommand{\yrep}{y^{\textrm{rep}}}
+\newcommand{\ynew}{y^{\textrm{new}}}
+\newcommand{\yobs}{y^{\textrm{obs}}}
+\newcommand{\model}{\mathcal{M}}
+\newcommand{\ppc}{\textrm{ppc}}
+\newcommand{\ideal}{\textrm{ideal}}
+\newcommand{\loglik}{\mathcal{L}}
+\newcommand{\nw}{\textrm{new}}
+\newcommand{\data}{\mathcal{D}}
+
+\newcommand{\Gam}{\textrm{Gam}}
+
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\begin{document}
+\title{
+Bert-MWE: a variational approach for non-compositionality inference in deep self attention networks
+}
+
+\nop{
+\author{Keqian Li, Hanwen Zha, Yu Su, Xifeng Yan}
+\affiliation{\institution{University of California at Santa Barbara}}
+\email{{klee, hwzha, ysu, xyan}@cs.ucsb.edu}
+
+\renewcommand{\shortauthors}{K. Li et al.}
+\renewcommand{\shorttitle}{UNEC}
+}
+
+\author{\IEEEauthorblockN{Anonymous}
+}
+
+\maketitle
+
+
+
+
+\begin{abstract}
+The recent emergence of multi-level deep self attention neural network has revolutionalized the way we model text data and use it for downstream analytical tasks. 
+It works by first breaking text into individual word tokens, 
+and learn deep representation of the text based on the composition of these single words.
+However, natural languages are not always compositional.
+For example, 
+idioms such as "dog day", %which means "a period of inactivity”
+named entities such as "Palo Alto", 
+technical concepts such as "support vector machine",
+which all have meanings of their own and can not be composed from its component words.
+In this work, 
+we propose \BertMWE, a principled probablistic framework that combine the best of the deep self attention network architecture and natural language non-compositionality, 
+by dynamically adjusting the information passways in the original network and infusing it with additional non-compositionality information,
+and leverage the efficient variantional inference techniques to uncover the underlying parameter  distribution.
+Experiments demonstrated the effectiveness of our approach over the state of the art baseline models across a wide range of text modeling and downstream analytical tasks.
+\end{abstract}
+
+
+
+\input{intro}
+\input{relatedwork.tex}
+\input{framework.tex}
+\input{algorithm.tex}
+\input{exp}
+
+
+\section{Conclusion}
+In this work, The recent emergence of multi-level deep self attention neural network has revolutionalized the way we model text data and use it for downstream analytical tasks. 
+It works by first breaking text into individual word tokens, 
+and learn deep representation of the text based on the composition of these single words.
+However, natural languages are not always compositional.
+For example, 
+idioms such as "dog day", %which means "a period of inactivity”
+named entities such as "Palo Alto", 
+technical concepts such as "support vector machine",
+which all have meanings of their own and can not be composed from its component words.
+In this work, 
+we propose \BertMWE, a principled probablistic framework that combine the best of the deep self attention network architecture and natural language non-compositionality, 
+by dynamically adjusting the information passways in the original network and infusing it with additional non-compositionality information,
+and leverage the efficient variantional inference techniques to uncover the underlying parameter  distribution.
+Experiments demonstrated the effectiveness of our approach over the state of the art baseline models across a wide range of text modeling and downstream analytical tasks.
+
+
+
+
+
+\balance
+
+\bibliographystyle{IEEEtran}
+\bibliography{conceptBib}
+\end{document}

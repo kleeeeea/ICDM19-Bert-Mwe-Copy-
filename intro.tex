@@ -1,0 +1,96 @@
+%!TEX root =  concept_mining.tex
+
+
+\section{Introduction}
+Multi-word expressions refers to the idiosyncratic, non-composable, expression that span across different words (Cons- tant et al., 2017; Baldwin and Kim, 2010), which includes
+idioms such as "dog day", which me- ans "a period of inactivity", 
+named entities such as "Palo Alto", 
+or technical terms such as "generative adversarial network". 
+The existence of atomic, non-composable phrases in text data has been widely recognized \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}:  \cite{jackendoff1997architecture}
+the number of MWEs in a speaker's lexicon is of the same order of magnitude as the number of single words,
+Furthermore, in Specialized domain vocabulary, such as terminology, overwhelmingly consists of MWEs
+and \cite{justeson1995technical} claims that 
+"when native English forms are used to create new terms, it most often takes at least two words to adequately specify a meaning", and that "often, well established one-word terms are Greek or Latin forms made up of more than one root, e.g. aerodynamics". As a concrete example, in \autoref{tab-data-stats} we list some examplar that exists in the dataset, which posses concrete meanings and can be critical to understanding the text and perform further reasoning.
+Driven these observations has been utilized by approaches such as downstream tasks such as text classification \cite{furnkranz1998study} and machine translation
+%claims that our mental lexicon (vocabulary) of MWEs is as extensive as the one that is made up of single words, 
+
+Despite the its wide existence,  multi-word expression has been largely overseen by deep learning approaches，whose typical processing pipeline goes like this:
+given a piece of input text, we first break it into a linear sequence of word tokens, and apply neural network models suitable for 1d sequential data, 
+such as
+convolution along time dimension, 
+recurrent network.
+The recent development architecture for text data has been shifting towards the deep transformer architecture \cite{vaswani2017attention}, 
+which works by first breaking text into individual word tokens, 
+and relies on attention mechanism to learn to build deep representation of text based on the compositions of single words.
+All of them relies on the assumption that the meaning of text is fully decomposed into its individual component words, and is contradicting with the existence of multi-word expressions, which are by definition ''non-composable''.
+
+%Multiword expressions (MWEs) are linguistic objects containing two or more words and showing some degre of non-compositionality. For instance, the meaning of to kick the bucket (i.e. ‘to die’) cannot be predicted from the meaning of its components, while the (masculine) gender of un peau rouge (’redskin’ in French) is not inherited from its nominal component (peau ’skin’ is feminine).
+%MWEs encompass versatile linguistic objects: compounds (air brake), complex terms (random access memory), multiword named entities (European Bank for Reconstruction and Development), light-verb constructions (to take a nap), phrasal verbs (to make up for sth), idioms (to kick the bucket), proverbs (Fortune favours the bold.), etc Basic facts about MWEs are that: (i) they are prevalent in natural language texts – up to 40% of text items belong to MWEs (Gross and Senellart 1998, Sag et al. 2002);
+
+\begin{table}
+\centering
+\caption{Example multi-word expression used in our }\label{tab:dataset-stats}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{Category}  & \textbf{Top Concepts} \\
+\midrule
+Arxiv CS & \multicolumn{1}{p{.35\textwidth}}{\raggedright causal models, convergence rates, decision trees, statistical inference, ensemble learning, statistical tests, support vector machines, training instances, discriminative learning, transfer learning, test set
+} \\
+\midrule
+Wiki & \multicolumn{1}{p{.35\textwidth}}{\raggedright map and reduce, pattern mining algorithms, NNqueries, star schema, database state, transaction log, business objects, stored procedure, scan operator, materialized view, deep web data, tpc h benchmark $\dots$
+}  \\
+\bottomrule
+RTE & \multicolumn{1}{p{.35\textwidth}}{\raggedright map and reduce, pattern mining algorithms, NNqueries, star schema, database state, transaction log, business objects, stored procedure, scan operator, materialized view, deep web data, tpc h benchmark $\dots$
+}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Extending deep learning models with non-composable multiword expressions is challenging.
+The reasoning is as follows.
+Firstly, 
+the current, single word sequence provides a clean and uniform representation of text, as a 
+one dimensional, linearly ordered sequence, 
+adding MWE into the representation changes the modality of the input and disrupt 
+further network design.
+Furthermore, 
+In contrast to single words, 
+ one could generate large amount of word combinations which may or may not be real MWEs, 
+simply importing all of them into the network would introduce large amount of noise and overwhelm the network with false positive  information,
+which may negatively affect the model performance.
+
+
+
+In this work, 
+we propose \BertMWE, a generalization of deep transformer network architecture \cite{vaswani2017attention}, 
+that combines the best of deep neural network's ability to compose and the  MWE's atomic, non-composable information, 
+by jointly inferring the original neural networks model as well as
+natural language non-compositionality.
+It is a strict generalization of the original, transformer architecture,
+and fully inherits its capability for modeling single word sequences.  
+Because deep representations is obtained solely with self-attention and point-wise where data in a sequence are processed in a parallel manner, Our design of \BertMWE naturally inject non-composable, MWE information into the sequence of single word representation of text in a homogeneous fashion, without breaking the symmetry of input modality or incuring further design choices and tradeoffs.
+
+
+In order to 
+it is critical for the model to be able to filter out noise false and capture cri, 
+To that end, we propose a principled probabilistic framework for inferring the network architecture and the natural language non-compositionality, 
+to dynamically add extra MWE information in a data-aware fashion
+that best supports the downstream predictive performance. 
+Specifically, we aim to learn a distribution over all possible model that with different degrees of non-compositionality assigned to each specific MWEs, and so that at the end of model output, the expected probability of the observed model output is optimized, averaged across all different model configurations.
+We then propose an efficient variational bayes algorithm to efficiently perform inference over the posterior model distribution, and provide an efficient implementation scheme to integrate it into the deep transformer network. 
+
+
+To evaluate the effectiveness of our approach, we apply our approach over 3 major families of models: sequence to label, sequence pair matching, and sequence to sequence. We manually compile the arxiv cs, pubmed, nips full text corpus, and show that our model can improves performance on all of the natural language processing tasks mentioned above.
+
+
+In summary, our contribution is three-fold:
+\begin{itemize}[leftmargin=*]
+    \item We study a novel problem of hierarchical categorization of technical documents according to a target taxonomy, without a large amount of labeled training data or existing knowledge bases.
+    \item 
+    We propose a novel concept based approach that represents both the taxonomy categories and the documents using concepts mined from the entire corpus, based on which we can effectively compare their similarities and categorize the documents accordingly.
+    \item We comprehensively evaluate our approaches in comparison with the state-of-the-art hierarchical classification methods over three real-world datasets in the fields of computer science, physics \& mathematics and medicine.
+\end{itemize}
+
+The rest of the section is organized as follows. Section 2 provide a comprehensive review of previous work and further motivate our approach. Section 3 discuss the preprocessing steps needed , and in Section 4 we discuss our approach to incorporate the n-gram into deep learning model. We present experiment results in Section 5 and draw conclusion in Section 6.
