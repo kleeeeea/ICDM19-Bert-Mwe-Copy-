@@ -1,4 +1,4 @@
-\subsection{efficient approximate inference}
+\subsection{efficient approximate inference}\label{sec:approximate-inference}
 
 
 In order to evaluate the derivative and optimize the value of the ELBO defined in \autoref{eq:elbo0} with respect to the parameter $d$, 
@@ -147,7 +147,7 @@ The MWE-Dropout layer is then followed by the Multi-Head Attention, LayerNorm, F
 
 
 
-\subsection{Prediction}
+\subsection{Prediction} \label{sec:prediction}
 The goal of variational inference is to obtain the hyper-paramters governing $\Pi, \{\pi_i \vert i \in V\}$ the as well as the mean-weights $W$ that jointly controls the probability distribution of model parameters $B, \{b_i \vert i \in V\}, \Theta_{Bert-MWE}$, the task now is to predict the target output given a new incoming input text $x$.
 Instead of performing  from a static point estimate of the model, we perform prediction by directly drawing samples from posterior predictive distribution.
 
