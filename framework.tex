@@ -126,11 +126,4 @@ Following the variational inference principle, our goal is then to optimize the 
     = & \mathcal{L}_{Bernoulli} (W, B, \{\beta_i, i \in V\}) \label{eq:elbo0}
 \end{align}
 
-Here $\mathbb{E}_{\Theta \sim Q} (P (\mathcalD | \Theta) )$ is the expectation of the conditional likelihood under the variational distribution as described in \autoref{eq:exp}. $D_{KL}(Q( \Theta) ||\mathcal{P}( \Theta))$ denotes the KL divergence between the variational distribution and the prior distribution of the model parameters, and can be approximated by following \cite{gal2016uncertainty}.
-%
-%, we omit this term in practise and focus on optimizing the likelihood term  $\mathbb{E}_{\Theta \sim Q} (P (\mathcalD | \Theta) )$.
-
-
-%Following the variational interpretation, dropout is seen as an approximating distribution $q_\theta(\bo)$ to the posterior in a Bayesian neural network with a set of random weight matrices $\bo = \{\W_l\}_{l=1}^L$ with $L$ layers and $\theta$ the set of variational parameters. 
-% Assume that the weight matrices can be written as $\bo = g(\theta, \bepsilon)$ with $\epsilon$ a random variable that does not depend on $\theta$.
-%The optimisation objective that follows from the variational interpretation can be written as:
+Here $\mathbb{E}_{\Theta \sim Q} (P (\mathcalD | \Theta) )$ is the expectation of the conditional likelihood under the variational distribution as described in \autoref{eq:exp}. $D_{KL}(Q( \Theta) ||\mathcal{P}( \Theta))$ denotes the KL divergence between the variational distribution and the prior distribution of the model parameters, which we approximate using \cite{gal2016uncertainty}.

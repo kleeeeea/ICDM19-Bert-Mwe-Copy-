@@ -1,22 +1,23 @@
 \subsection{efficient approximate inference}\label{sec:approximate-inference}
 
 
-In order to evaluate the derivative and optimize the value of the ELBO defined in \autoref{eq:elbo0} with respect to the parameter $d$, 
-one usually resort to sampled based methods such as black box variational inference that approximate the derivative by drawing samples from the variational distribution \cite{ranganath2014black}. 
-Directly sampling from the variational distribition is hard, however, because the covariance across different samples can accumulate and in practise is shown to be  not manageable.\cite{gal2017concrete}.
-Instead, we follow the local reparameterization trick \citep{Kingma2015},
-to introduce new ways of parameterizing the distribution, and 
-decompose the global sample uncertainty in the model weights into local noise 
-so that correlation between samples are removed.
+In order to evaluate the derivative and optimize the ELBO (see \autoref{eq:elbo0}) without exact integration over the latent variables, 
+we resort to sampling based methods 
+that approximate the derivative value by drawing samples from the variational distribution \cite{ranganath2014black}. 
+However, directly sampling from the distribution, e.g. through stochastic gradient variational bayes  \cite{rezende2014stochastic} might be hard due to high variance in the estimated gradients and the sheer amount of latent variables \cite{kingma2015variational}.
+We instead leverage the local re-parameterization trick \citep{Kingma2015} to  
+decompose the global sample uncertainty in the model weights into local noise, and remove the correlation between samples in the mini-batch.
 
-However, because the Bernouli distributions is discrete, it is very hard for us to obtain gradients about the variational parameters and re-adjust the distribution. One recent approach  \cite{chen2019large} utilize the Gaussian distribution as a relaxation of the original, discrete 
-Bernouli distributions, however, these two families of distributions are of very different nature and the discrepancies between them can cause practical difficulties where additional truncating is necessary to prevent the computation from diverging, and in practise cause the model to underperform
-\cite{molchanov2016dropout}, 
-not to mention that fact the error may accumulate as the architecture goes deeper, and more approximation is applied at different layers of the network.
+Another challenge is that, because the generation process follows a Bernouli distributions, 
+which is discrete and thus block the back-propagation from the estimated likelihood, 
+it is very hard for us to obtain gradients about the variational parameters and re-adjust the distribution. 
+One possible approach is to relax the discrete distribution into a continuous, Gaussian distribution \cite{wang2013fast, chen2019large}. However, these two families of distributions are of very different nature and 
+requires significant hand tuning such as truncating in order  to prevent the computation from diverging, and in practice cause the model to underperform \cite{molchanov2016dropout}, not to mention that fact the computation error could accumulate as the number of layers increases, and more  approximation is applied for each layer. 
 
-To remedy this, we adopt the Gumbel-Max trick \cite{gumbel1954statistical, gummaddison2014sampling} to reparameterize the discrete, bernoulli distribution,
-and follow \cite{jang2016categorical} use the softmax function as a continuous relaxation to make the sample differentiable w.r.t. the variational parameter. 
-For the case of Benoulli he continuous relaxation to categorical distribution with mean parameters $p$ can be parameterized as 
+To remedy this, we adopt the Gumbel-Max trick \cite{gumbel1954statistical, gummaddison2014sampling} as the continuous relaxation of the bernoulli distribution
+and %follow Jang. et.al. \cite{jang2016categorical} to use the softmax function as a continuous relaxation to 
+make the sample differentiable with respect to the variational parameter. 
+Specifically, the continuous relaxation to Bernoulli distribution with mean parameters $p$ can be parameterized as
 \begin{equation}
 Gumble_{t}( \tilde{\beta} | p) = t \left( \frac{p}{\tilde{\beta}^t} + \frac{1 - p}{(1- \tilde{\beta})^t} \right)^{-2} 
 \frac{p}{\tilde{\beta}^{(t + 1)}} \frac{1 - p}{(1 - \tilde{\beta})^{(t + 1)}}  
@@ -95,6 +96,8 @@ in practise we ignore this term because it is $O(N)$ orders of magnitude smaller
 
 % Here we follow a similar approach to \citep{Kingma2015}, and rely on the variational interpretation of discrete dropout in order to obtain a principled optimisation objective \citep{Gal2016Uncertainty}.
 
+
+\subsection{Network architecture}
 Finally, we describe the architecture design to fully specify the  variational distribution of model parameters $p(\Theta_{Bert-MWE} \vert W, B, \{\beta_i, i \in V\})$. 
 The challenge is that approximate inference scheme no longer treats the selection of MWEs as black or white decisions and the non-compositionality inference needs to be dynamically integrated into the model architecture. 
 % To that end, we propose the following neural network design that inject the approximate inference over the selection of MWEs, as controlled by $B, \{ \beta_i | i \in V \}$, and the self-attention network parameters, $W$ into one single architecture.
