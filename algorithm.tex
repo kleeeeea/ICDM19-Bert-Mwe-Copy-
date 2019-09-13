@@ -39,19 +39,12 @@ For Bernoulli random variable with mean parameter $\pi$, this amounts to drawing
 \end{align}
 
 
-%For distributions that are reparameterizable, we can compute the sample $z$ as a deterministic function $g$ of the parameters $\theta$ and an independent random variable $\epsilon$, so that $z = g(\theta, \epsilon)$. The path-wise gradients from $f$ to $\theta$ can then be computed without encountering any stochastic nodes:
-%\begin{equation}
-%\frac{\partial}{\partial \theta} \mathbb{E}_{z\sim p_\theta}\left[f(z))\right] = \frac{\partial}{\partial \theta} \mathbb{E}_{\epsilon}\left[f(g(\theta,\epsilon))\right] = \mathbb{E}_{\epsilon\sim p_\epsilon}\left[\frac{\partial f}{\partial g} \frac{\partial g}{\partial \theta}\right]
-%\end{equation}
-
-
-
-
 Without loss of generality, we consider the case where the discrete variables $B$ and $\{
 \beta_i | i \in V\}$ are directly replaced with Gumbel-softmax distributed continuous relaxation counterpart, denoted $\tilde{B}$ and $ \{ \tilde{\beta}_i  | i \in V\}$, and 
-we apply these quantities multiplicatively into the model weights for the corredponding MWEs to obtain the resulted model parameters, 
-instead of completing zeroing them out, or keeping them at 100\%.
-Denoting $\tilde{\Theta} = \{\Theta_{Bert-MWE}, \tilde{B}, \{\tilde{\beta}_i | i \in V\} \vert x,y \in \mathcalD \}$, and $ \tilde{Q} (\Theta | W, \Pi, \{\pi_i | i \in V\})$ as its variational distribution, the expected conditional log likelihood for the observed data $\mathcalD$ can then be re-written as
+we apply these relaxed quantities multiplicatively into the model weights for the corresponding MWEs in $\Theta$, 
+instead of multiplying them by a hard 0, 1 as in the original Bernoulli distribution case.
+Denoting $ \tilde{Q} (\Theta | W, \Pi, \{\pi_i | i \in V\})$ as the re-parameterized variational distribution, 
+the expected conditional log likelihood for the observed data $\mathcalD$ can then be re-written as
 \begin{align}
 & \mathbb{E}_{\tilde{\Theta} \sim \tilde{Q}} \log P (\mathcalD | \tilde{\Theta}) \nonumber\\ 
 = & \sum_{x, y \in \mathcalD} \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta_{Bert-MWE}} Gumble(\tilde{B} | \Pi) \prod_i^{V} \log ( Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
@@ -60,7 +53,7 @@ Denoting $\tilde{\Theta} = \{\Theta_{Bert-MWE}, \tilde{B}, \{\tilde{\beta}_i | i
 \label{eq:exp-gumble}
 \end{align}
 
-Our goal then becomes to optimize the evidence lower bound indicated by the above expected conditional log likelihood 
+Our goal now becomes, to optimize the evidence lower bound indicated by the above expected conditional log likelihood 
 
 \begin{align}
     &\log P( \mathcalD ) \nonumber\\
@@ -68,10 +61,12 @@ Our goal then becomes to optimize the evidence lower bound indicated by the abov
     = & \mathcal{L}_{Gumble} (W, B, \{\beta_i, i \in V\}) \label{eq:elbo0}
 \end{align}
 
-The first term in the ELBO refers to the expected conditional log likelihood of the data, as defined in \autoref{eq:exp-gumble}, and the second term is the KL divergence between the new variational distribution $\tilde{Q} ( \tilde{\Theta})$ 
+The first term in the ELBO refers to the expected conditional log likelihood of the data, as defined in \autoref{eq:exp-gumble}, 
+and the second term is the KL divergence between the new variational distribution $\tilde{Q} ( \tilde{\Theta})$ 
 and a predefined prior distribution  $\mathcal{P}( \tilde{\Theta})$.
-Although we can analytically approximate it by again following \cite{gal2016uncertainty}, 
-in practise we ignore this term because it is $O(N)$ orders of magnitude smaller than the expected conditional likelihood, where $N$ the amount of data to train the model. This is especially true when we can train the models weights using very large amount of training instances, for example from the unsupervised text data under the language modeling objective \cite{devlin2018bert}.
+Although we can obtain the its via value analytical formula or Monte Carlo sampling \cite{gal2016uncertainty}, 
+we ignore this term in practice because it is of $O(N)$ orders of magnitude smaller than the expected conditional likelihood of likehood, with $N$ being the amount of data to train the model. 
+This is especially true when we can train the models weights using very large amount of training instances, e.g. using the language modeling objective \cite{devlin2018bert}.
 
 
 
@@ -160,7 +155,7 @@ Specifically, the posterior predictive distribution of $y$ under the variational
 = & \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta_{Bert-MWE}} Gumble(\tilde{B} | \Pi) \prod_i^{V} Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
 & \quad \quad \quad \quad \quad \quad \quad \quad p(\Theta_{Bert-MWE} \vert W, B, \{\beta_i, i \in V\}) \nonumber\\ 
 & \quad \quad \quad \quad \quad \quad \quad \quad p(y \vert f^{\Theta_{Bert-MWE}}(x)) 
-\label{eq:exp-gumble}
+\label{eq:prediction}
 \end{align}
 
 In terms of neural network architecture, this amounts to keeping the exact same Gumble-softmax sampling operation (\autoref{eq:gumbel-sample}) and the same behavior of the MWE dropout layer during both training and inference stage. Intuitively, this is because the learned model distribution are shared across the training and inference.
