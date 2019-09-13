@@ -2,30 +2,26 @@
 
 
 \section{Related work}
-\subsection{text modeling for neural network}
-Single word based modeling has long been the dominant, if not the only approach, for deep learning models to process raw text into numerical form, and feed into downstream neural network modules to solve various kinds of NLP tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}.
-A lot of methods has been proposed to modify the original word embedding. One recent trend is to go "small", and try to exploit sub-word level information, such as character, or sub-sequence of characters inside a word \cite{wieting2016charagram, bojanowski2016enriching, pinter2017mimicking}, by borrowing information from words with similar subsequence of characters, they are able to infer the meaning of rare words and use it for downstream tasks. 
+\subsection{Neural methods for language modeling and understanding}
+Representing text at word level has long been the dominant, if not the only norm, for deep learning models to address natural language related  tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}. 
+One possible variant is to go "small", and try to exploit sub-word level information such as character, or sub-word \cite{wieting2016charagram, bojanowski2016enriching, pinter2017mimicking}. By borrowing information from words with similar subsequence of characters, they are able to infer the meaning of rare words and apply it in downstream tasks. 
 Others have kept the unigram formulation, and try to better learn the embedding by extending it to multiple word sense \cite{neelakantan2015efficient, athiwaratkun2017multimodal}, 
 different type of contexts \cite{levy2014dependency, melamud2016role}, 
-or try to incorporate more information, such as knowledge base hierarchical and similarity \cite{nickel2017poincare, faruqui2014retrofitting}, 
-or to pass it through a language modeling layers before feeding to downstream neural network in order to incorporate context information \cite{mccann2017learned, peters2018deep}.
-Finally, there is also a trend of going "big", to embed multi-word phrases, or even sentence or paragraphs into vector space \cite{mikolov2013distributed, hill2015learning, arora2016simple} . 
-However, these works mostly focus on \emph{intrinsic evaluation} of the embedding itself, using tasks such as similarity, but not on applying it into deep learning models.
+or by incorporating such as knowledge base to enforce hierarchy and similarity \cite{nickel2017poincare, faruqui2014retrofitting}. 
+% or to pass it through a language modeling layers before feeding it to downstream neural network in order to incorporate context information \cite{mccann2017learned, peters2018deep}.
+Finally, there is also a trend of going "big", that tries to embed multi-word phrases, or even sentence or paragraphs into vector space \cite{mikolov2013distributed, hill2015dictionary, arora2016simple}. 
+which mostly focus on \emph{intrinsic evaluation} of the learned embedding on how well it can represent the phrases and sentence.
 
-\subsection{entity and concept discovery in text}
-The existence of atomic, non-composable phrases has been widely recognized in the NLP community with continued research interest \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}. \cite{jackendoff1997architecture}
-the number of MWEs in a speaker's lexicon is of the same order of magnitude as the number of single words,
-%claims that our mental lexicon (vocabulary) of MWEs is as extensive as the one that is made up of single words, 
-Specialized domain vocabulary, such as terminology, overwhelmingly consists of MWEs
-and \cite{justeson1995technical} claims that 
-"when native English forms are used to create new terms, it most often takes at least two words to adequately specify a meaning", and that "often, well established one-word terms are Greek or Latin forms made up of more than one root, e.g. aerodynamics".
-Motivated by such, the research on has already been a focus on the community. For example, the  line of work on key term extraction in scientific corpus \cite{beliga2015overview, zhang2008comparative} learns to detect meaningful concepts by  generating noun phrases as candidates, and utilized statistical occurrence and co-occurrence measures \cite{frantzi2000automatic}, semantic information from knowledge base \cite{medelyan2006thesaurus}, rank the candidates \cite{nguyen2007keyphrase}. Important further application on open information extraction \cite{banko2007open}, taxonomy construction \cite{wu2012probase, carlson2010toward}, entity recognition and typing \cite{ren2016automatic, facetgist} are all based on it.
-Yet another line of related work is on quality phrase mining \cite{segphrase, autophrase, li2018concept}, which is able to adaptively recognize concept occurrence based on concept quality, and exploited important statistical features, grammartical features and neural embedding features \cite{autophrase} as well as knowledge base entity names to mine concepts from a document in a comprehensive manner.
-
+\subsection{non-compositionality discovery in text}
+The existence of atomic, non-composable phrases has been widely recognized and extensively studied \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}. 
+Motivated by such, discovering these phrases have already been a central focus of the community, 
+ranging from noun phrase chunking, named entity recognition \cite{nadeau2007survey, baldwin2010multiword, pecina2006combining, sporleder2009unsupervised, hashimoto2008construction},
+key terminology extraction in scientific corpus \cite{beliga2015overview, zhang2008comparative}, statistical phrase mining \cite{segphrase, autophrase} to concept mining via embedding \cite{li2018concept}, 
+which leverages signals such as grammatical pattern, statistical significance, external knowledge bases, neural embedding or even large amount of labeled training examples to detect high quality single words or phrases as meaning bearing units, in the hope that it can be useful for downstream applications.
 
 
 \subsection{Application of text-non compositionality}
-In fact, researches in information extraction and text mining has been directly using the occurrences of these multi word structure, e.g. based on the POS-tag patterns, to harvest natural concepts or entities from text data, and to further construct structured knowledge bases \cite{banko2007open, wu2012probase, ren2016automatic}. 
-Another line of work is on concept/entity aware representation, which utilizes information from a knowledge base, such as entity description, entity type or links to other entities to perform query expansion \cite{xiong2015query, dalton2014entity}, 
-and improves relevance computation \cite{shen2018entity}, or ranking \cite{xiong2015esdrank}.
-Explicitly annotated entities in documents have been utilized to represent text \cite{xiong2017explicit, xiong2017word}, which are then used to derive features to train a ranking model. 
+The importance of text-non compositionality has been witnessed by a wide spectrum of downstream applications. 
+For example, open information extraction \cite{banko2007open}, taxonomy construction \cite{wu2012probase, carlson2010toward}, entity and relation typing \cite{ren2016automatic, facetgist}, are more direct applications that directly harvest knowledge from text based on these non-composable units.
+On the other hand, there has been a long history of task specific model design that leverages these units as semantics representation of text, including 
+information retrieval \cite{xiong2015query, dalton2014entity, shen2018entity}, text classification \cite{furnkranz1998study}, machine translation \cite{koehn2003statistical} and parsing \cite{cafferkey2007multi, savary2015parseme}, to name a few. Whether it could be used to improve state of the art language modeling and understanding remains an unanswered research question.
