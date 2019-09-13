@@ -1,28 +1,36 @@
 %!TEX root =  concept_mining.tex
 
 
-\section{Introduction}
-Multi-word expressions refers to the idiosyncratic, non-composable, expression that span across different words (Cons- tant et al., 2017; Baldwin and Kim, 2010), which includes
+\nop{ refers to the idiosyncratic, non-composable, expression that span across different word, which includes
 idioms such as "dog day", which me- ans "a period of inactivity", 
 named entities such as "Palo Alto", 
-or technical terms such as "generative adversarial network". 
-The existence of atomic, non-composable phrases in text data has been widely recognized \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}:  \cite{jackendoff1997architecture}
-the number of MWEs in a speaker's lexicon is of the same order of magnitude as the number of single words,
-Furthermore, in Specialized domain vocabulary, such as terminology, overwhelmingly consists of MWEs
-and \cite{justeson1995technical} claims that 
-"when native English forms are used to create new terms, it most often takes at least two words to adequately specify a meaning", and that "often, well established one-word terms are Greek or Latin forms made up of more than one root, e.g. aerodynamics". As a concrete example, in \autoref{tab-data-stats} we list some examplar that exists in the dataset, which posses concrete meanings and can be critical to understanding the text and perform further reasoning.
-Driven these observations has been utilized by approaches such as downstream tasks such as text classification \cite{furnkranz1998study} and machine translation
+or technical terms such as "generative adversarial network" \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}. 
+}
+
+\section{Introduction}
+The existence of atomic, non-composable Multi-word expressions (MWE) in text data has been widely recognized :  Jackendoff et.al. \cite{jackendoff1997architecture} estimates that 
+the number of MWEs in a speaker's lexicon is of the same order of magnitude as the number of single words.
+This is especially the case for specialized domain, such as terminology. 
+Justenson et.al. \cite{justeson1995technical} claims that 
+"when native English forms are used to create new terms, 
+it most often takes at least two words to adequately specify a meaning", 
+and even if the terminology is not in the form of MWE, they 
+"are Greek or Latin forms made up of more than one root, e.g. aerodynamics". 
+In \autoref{tab-examplar} we list some exemplar MWEs from the language modeling and understanding benchmarks dataset we use, 
+which can be helpful in conveying meaning and determining the context 
+to help support modeling and understanding text.
+Driven these observations are extensive applications such as information retrieval \cite{xiong2015query, dalton2014entity, shen2018entity}, text classification \cite{furnkranz1998study}, machine translation \cite{koehn2003statistical}, parsing \cite{cafferkey2007multi, savary2015parseme} information extraction and knowledge base construction \cite{banko2007open, wu2012probase, ren2016automatic}, among many others.
+
 %claims that our mental lexicon (vocabulary) of MWEs is as extensive as the one that is made up of single words, 
 
-Despite the its wide existence,  multi-word expression has been largely overseen by deep learning approaches，whose typical processing pipeline goes like this:
+Despite the its wide existence,  multi-word expression has been largely overseen by deep learning approaches.
+whose typical processing pipeline goes like this:
 given a piece of input text, we first break it into a linear sequence of word tokens, and apply neural network models suitable for 1d sequential data, 
-such as
-convolution along time dimension, 
-recurrent network.
+such as convolution along time dimension, recurrent network.
 The recent development architecture for text data has been shifting towards the deep transformer architecture \cite{vaswani2017attention}, 
 which works by first breaking text into individual word tokens, 
 and relies on attention mechanism to learn to build deep representation of text based on the compositions of single words.
-All of them relies on the assumption that the meaning of text is fully decomposed into its individual component words, and is contradicting with the existence of multi-word expressions, which are by definition ''non-composable''.
+All of them relies on the assumption that the meaning of text is fully decomposed into its individual component words, and is contradicting with the existence of multi-word expressions, which are by definition ``non-composable".
 
 %Multiword expressions (MWEs) are linguistic objects containing two or more words and showing some degre of non-compositionality. For instance, the meaning of to kick the bucket (i.e. ‘to die’) cannot be predicted from the meaning of its components, while the (masculine) gender of un peau rouge (’redskin’ in French) is not inherited from its nominal component (peau ’skin’ is feminine).
 %MWEs encompass versatile linguistic objects: compounds (air brake), complex terms (random access memory), multiword named entities (European Bank for Reconstruction and Development), light-verb constructions (to take a nap), phrasal verbs (to make up for sth), idioms (to kick the bucket), proverbs (Fortune favours the bold.), etc Basic facts about MWEs are that: (i) they are prevalent in natural language texts – up to 40% of text items belong to MWEs (Gross and Senellart 1998, Sag et al. 2002);
@@ -38,13 +46,14 @@ All of them relies on the assumption that the meaning of text is fully decompose
 Arxiv CS & \multicolumn{1}{p{.35\textwidth}}{\raggedright causal models, convergence rates, decision trees, statistical inference, ensemble learning, statistical tests, support vector machines, training instances, discriminative learning, transfer learning, test set
 } \\
 \midrule
-Wiki & \multicolumn{1}{p{.35\textwidth}}{\raggedright map and reduce, pattern mining algorithms, NNqueries, star schema, database state, transaction log, business objects, stored procedure, scan operator, materialized view, deep web data, tpc h benchmark $\dots$
+Wiki & \multicolumn{1}{p{.35\textwidth}}{\raggedright los angeles, new york times, civil war, virginia tech, american beauty, second world war, lock haven, liu kang, soviet union, san francisco, latin america, hong kong, grand slam, new england, mexico city, ...
 }  \\
 \bottomrule
-RTE & \multicolumn{1}{p{.35\textwidth}}{\raggedright map and reduce, pattern mining algorithms, NNqueries, star schema, database state, transaction log, business objects, stored procedure, scan operator, materialized view, deep web data, tpc h benchmark $\dots$
+RTE & \multicolumn{1}{p{.35\textwidth}}{\raggedright united states, new york, hurricane katrina, dick cheney, gulf war, atomic bomb, dow jones, gerhard schroeder, sunshine coast, game theory, big bang, tom cruise, new south wales, united nations, green card, ...
 }  \\
 \bottomrule
 \end{tabular}
+\label{tab-examplar}
 \end{table}
 
 
@@ -62,7 +71,7 @@ simply importing all of them into the network would introduce large amount of no
 which may negatively affect the model performance.
 
 
-
+by dynamically adjusting the information passages in the original network and infusing it with additional non-compositionality information, and leverage the efficient variational inference techniques to uncover the underlying parameter  distribution. 
 In this work, 
 we propose \BertMWE, a generalization of deep transformer network architecture \cite{vaswani2017attention}, 
 that combines the best of deep neural network's ability to compose and the  MWE's atomic, non-composable information, 

@@ -1,35 +1,94 @@
 %!TEX root =  concept_mining.tex
 
 
-\section{Experiments}
-
-In this section we experimentally evaluate the proposed approach over an wide range of tasks across different domains and demonstrate its effectiveness over the state of the art baseline approaches.
-
-\label{sec:experiments}
-
-
 \begin{table*}
 \small
 \centering
 \begin{tabular}{llllll} 
 \toprule
-Datasets & Task                                                                                               & Description                              & \#Class & \#Train & \#Test  \\
+Datasets & Task & Domain & Metric & $\vert$ Train$\vert$ & $\vert$Test$\vert$  \\
 \midrule
-ATIS-flight~\cite{tur2010left} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}NLU\end{tabular}}  & Classify Airline Travel dialog           & 21      & 4,478   & 893     \\
-Snips~\cite{DBLP:journals/corr/abs-1805-10190}       &                         & Classify inputs to personal voice assistant & 7       & 13,084  & 700     \\
+
+Sample Text & \multirow{5}{*}{\begin{tabular}[c]{@{}l@{}}Text Modeling\end{tabular}}  & General text           & \multirow{5}{*}{\begin{tabular}[c]{@{}l@{}}Word prediction + \\ Next sentence prediction\end{tabular}} & 16   & 480     \\
+Sample Large &                         & General text &       & 280K  & 8.4M     \\
+Wikitext-2 converted       &                         & Articles from Wikipedia &   & 60K  & 1800K     \\
+Arxiv Computer Science      &                         & Technical papers from \url{arxiv.org}  &       & 362K  & 1.1M     \\
+Arxiv Math       &                         & Technical papers from \url{arxiv.org} &      & 175K  & 525K     \\
 \midrule
-AG-news~\cite{zhang2015character}     &  \multirow{4}{*}{\begin{tabular}[c]{@{}l@{}}DC\end{tabular}}  & Categories: World, Sports, etc  & 4 & 120,000 & 7,600   \\
-DBPedia~\cite{lehmann2015dbpedia}     &                      & Categories: Company, Athlete, Album, etc & 14      & 560,000 & 70,000  \\
-Sogou-news~\cite{zhang2015character}  &                         & Categories: Sports, Technology, etc      & 5       & 450,000 & 60,000  \\
-Yelp-review~\cite{zhang2015character} &                         & Categories: Review Ratings (1-5)         & 5       & 650,000 & 50,000  \\ 
+CoLA & classification  & Books and journal articles  & Matthews coefficient      & 8.5k & 1k    \\
 \midrule
-SNLI~\cite{DBLP:conf/emnlp/BowmanAPM15}        &  \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}NLI\end{tabular}}                   & Entailment: Contradict, Neutral,Entail   & 3       & 550,152 & 10,000  \\
-MNLI~\cite{DBLP:conf/naacl/WilliamsNB18}        & & Multi-Genre Entailment   & 3       & 392,702 & 10,000  \\
+MRPC &  \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}paraphrase\end{tabular}}  & News &  \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Accuracy / F1\end{tabular}} 
+& 3.7k & 1.7k   \\
+QQP &                         & Questions from Quora &      & 364k & 391k  \\ 
+\midrule
+STS-B & Sentence Similarity                    & Misc.    & Pearson/Spearman       & 7k & 1.4k  \\
+\midrule
+MNLI        &  \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}NLI\end{tabular}}                   & Internet Crawl  & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Accuracy\end{tabular}}      &393k & 20k   \\
+RTE      &          & Wikipedia             &      &  2.5k & 3k  \\
+\midrule
+QNLI     & QA + NLI & News and Wikipedia   & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Accuracy\end{tabular}}      & 105k & 5.4k  \\
+WNLI        & coreference + NLI & Fiction books   &        & 634 & 146  \\
 \bottomrule
 \end{tabular}
 \caption{An overview of different datasets under different classification tasks including description and sizes.}
 \label{tab:dataset}
 \end{table*}
+
+
+
+
+
+\begin{figure*}
+\begin{minipage}[b]{.33\linewidth}
+ \includegraphics[width=\linewidth]{fig/st.pdf}
+\label{fig:manual-eval1}
+\end{minipage}
+\begin{minipage}[b]{.33\linewidth}
+ \includegraphics[width=\linewidth]{fig/sl.pdf}
+\label{fig:manual-eval2}
+\end{minipage}
+\begin{minipage}[b]{.33\linewidth}
+ \includegraphics[width=\linewidth]{fig/w.pdf}
+\label{fig:manual-eval2}
+\end{minipage}
+\vspace{-15pt}
+\caption{Learning and validation curve for the our datasets.}
+\label{fig:learning-curve}
+%\vspace{3pt}
+\end{figure*}
+
+
+
+
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lllclcllc} 
+\toprule
+System      & CoLA                                                                         & MRPC                                                                              & QQP                           & STS-B              & QNLI                     & MNLI          & RTE           & WNLI                      \\ 
+\hline
+BiLSTM      & 11.6                                                                         & 81.8/74.3                                                                         & \multicolumn{1}{l}{62.5/84.2} & 70.3/67.8          & \multicolumn{1}{l}{74.6} & 65.6          & 57.4          & \multicolumn{1}{l}{65.1}  \\
+BiLSTM+Attn & \textcolor[rgb]{0.133,0.133,0.133}{\textcolor[rgb]{0.133,0.133,0.133}{18.6}} & \textcolor[rgb]{0.133,0.133,0.133}{\textcolor[rgb]{0.133,0.133,0.133}{83.9/76.2}} & 72.8/70.5                     & 72.8/709           & 74.3                     & 67.6          & 58.4~ ~~      & 65.1                      \\
+OpenAI GPT  & 45.4                                                                         & 82.3/-                                                                            & 70.3/-                        & 80.0/-             & 87.4                     & 82.1          & 56.0          & 65.1                      \\
+Bert        & 57.9                                                                         & 86.0/89.9                                                                         & 89.9/86.7                     & 89.6/89.2          & 90.8                     & 83.4          & 67.1          & 57.7                      \\
+\BertMWE-Simple     & 58.1                                                                         & 86.0/89.9                                                                         & 90.7/87.5                     & \textbf{90.0}/89.5 & 91.3                     & \textbf{84.0} & \textbf{72.2} & 56.3                      \\
+    \BertMWE        & \textbf{59.7}                                                                & \textbf{86.5/90.4~}                                                               & \textbf{90.9/87.7}            & \textbf{90.0/89.6} & \textbf{91.5}            & \textbf{84.0} & \textbf{72.2} & \textbf{63.4}             \\
+\bottomrule
+\end{tabular}
+
+   \caption{Performance on supervised label prediction}
+   \label{tab:glue_results}
+\end{center}
+\end{table*}
+
+
+
+\section{Experiments}\label{sec:experiments}
+
+In this section we experimentally evaluate the proposed approach over an wide range of tasks across different domains and demonstrate its effectiveness over the state of the art baseline approaches.
+
+
+
 
 \subsection{Setup}
 
@@ -48,209 +107,174 @@ refer the reader to the original paper for details about the architecture and pa
 
 \noindent \textbf{Model training and weight initialization}
 In order to more directly see the difference between the \BertMWE and the basic case Bert model, we will conduct the model training of \BertMWE in an \textit{incremental} fashion:
-we follow the best training settings for each different variant of the Bert model  to train the basic model for a specific downstream task; after that, we start to train the corresponding \BertMWE 
+we first follow the best training settings for each different variant of the Bert model  to train the basic model for a specific downstream task; after that, we start to train the corresponding \BertMWE 
 for the Bert variant, and use the trained weighted of base Bert model for that task to initialize the \BertMWE model. In other words, the pre-trained weights of \BertMWE come from the corresponding Bert model without MWE.
 
 \noindent \textbf{Model variants}
-we apply the \BertMWE approach over the two different variants of the original Bert as proposed in \cite{devlin2018bert}: the Bert-Finetune as described in Section 3.5 of \cite{devlin2018bert}, where we use the pretrained weights as initialization, and fine-tune the model end to end, and the Bert-Feature, where we freeze the pretrained the model weights and use the outputted hidden states as feature to train a specific classification head. In addition, we evaluate two different versions of apply the MWE, the first, \BertConcat, simply follow the concatenation approach as proposed in \autoref{sec:arch-overview}, without inference over the dropout probabilities over different types of MWE, while the second, \BertMWE, follows the variational inference procedure over the dropout probability procedures and perform posterior predictive distribution for prediciting unseen outputs, as shown in \autoref{sec:var-param}, \autoref{sec:approximate-inference}, \autoref{sec:prediction}.
-
+we apply the \BertMWE approach over the two different variants of the original Bert as proposed in \cite{devlin2018bert}: the Bert-Finetune as described in Section 3.5 of \cite{devlin2018bert}, where we use the pretrained weights as initialization, and fine-tune the model end to end, and the Bert-Feature, where we freeze the pretrained the model weights and use the outputted hidden states as feature to train a specific classification head. We also 
+explore two different version of applying the non-compositionality information.
+The first is the theoretically sounded \BertMWE, which fully follows the variational inference procedure and learns a distribution of possible Bert models, as shown in \autoref{sec:var-param}; the second is a simplified version of \BertMWE, 
+which do not explicitly utilize the inference, and only concat the MWE with the original single word based input. However, it may implicitly conduct inference over the importance of multiword expressions by dynamically scale their inputted embedding to the downstream network.
 
 \subsection{Text modeling} \label{sec:dataset}
-We fisrt evaluate the proposed approach over the task of 
-learning to modeling the text data itself, without any additional supervision signal.
-We follow the original pretraining procedure for finetuning and evaluating different approaches,
-by first pre-processing the input corpus for the masked language model objective, and using the the sum of the mean masked LM likelihood and mean next sentence prediction likelihood as the objective function. 
-In order to have a fair comparison for the MWE based approaches, we prevent the information "leakage" from the MWE in the sentence that may contain the masked tokens, by discarding in the masking stage any MWE in the input if there is any overlap between the MWE and the masked tokens.
+We first evaluate the proposed approach on how well it can model the text data itself, without using any supervision signal.
+Specifically, we construct the training and evaluation set by following the construction of masked language model and next sentence prediction task in the orignal Bert model \cite{devlin2018bert}, and additionally, to make the competition fair with basic Bert models, 
+we will discard from the input any MWEs that has overlap with the masked position. 
+Any training instances whose token masked is included in the evaluation dataset is discarded.
+
+Both the training objective function and the evaluation metric of this task will be the sum of the  masked language model objective and next sentence prediction objective, which is computed as the sum of the mean masked LM likelihood and mean next sentence prediction likelihood
+
+We have evaluated our approach over the following corpus covering several different domains, as listed below.
+The dataset statistics are shown in \autoref{tab:dataset}. 
 
 
-across a wide range of tasks, which follows two paradigm: 
-, and learning to predict downstream supervised label from the input text. 
-
-
-
-We evaluate various aspects of the text modeling capabilities of the proposed approaches over the following domains, as detailed below. The dataset statistics is shown in \autoref{tab-data-stats}. 
-
-
-We have collected the following corpus, covering the domain of computer science, physics \& mathematics and medicine.
-The statistics of these datasets are summarized in Table S1, and the details are described below.
-
-\noindent \textbf{wiki}
-already pretrained
-use a subset of wikipedia
-
-
-\noindent \textbf{technical domain}
-fine tune on a
-
-
-\noindent \textbf{Quora} We use the publicly available Quora duplicate question detection dataset \footnote{quora.com}. Each data point is a pair of plain text questions, as well as a label denoting whether they are duplicate questions, and the goal is to predict this label.
-
-\noindent \textbf{DBPedia}
-We use the DBPedia ontology dataset, release by \cite{zhang2015character}. 
-It consists of 14 nonoverlapping class of entities in DBPedia, each is associated with a textual description as well as the class it belongs to, and the goal is to predict the class using the text.
-
-\noindent \textbf{Aminer}
-We collected another dataset for the classification task, by picking 14 nonoverlapping categories of computer science papers from the complete paper collection from academic search engine \cite{Tang08KDD}. Each paper is associated with title and abstract, and the goal is to predict its category.
-
-
-\noindent \textbf{Arxiv CS}
-We collected all the papers from arxiv.org under the category of computer science from the year of 2008 to 2018. Each paper is associated with its title and abstract. 
-
-\noindent \textbf{Pubmed}
-We construct a text collection in the medicine domain, 
-select the 31 publication sources 
-from the Pubmed paper abstract collection \footnote{https://www.ncbi.nlm.nih.gov/pubmed/}
-that has more than 1M  bytes of words and SCI impact factor above 1. Each paper is associated with title and abstract.
-
-
-
-\noindent \textbf{Computer Science} 
-The Computer Science corpus is obtained by crawling paper abstracts from \url{arXiv.org} under the top level category "computer science", and aligning the arxiv's category with aminer.org's academic conference classification\footnote{\url{https://aminer.org/ranks/conf}}.
-
-\noindent \textbf{Physics \& Mathematics} 
-The Physics \& Mathematics corpus is also obtained from \url{arXiv.org}, 
-by crawling paper abstracts under the top level category "physics" and "mathematics", and aligning them with the math subject headings\footnote{\url{https://www.maa.org/press/periodicals/loci/joma/subject-taxonomy}}
-and the physics subject headings\footnote{\url{https://physh.aps.org/}},
-\nop{
-which results in a height 5 taxonomy tree of 80 nodes. 
-We selected 573K documents that are only associated one primary category in the taxonomy tree as our corpus, which we will be able to use as automatically labeled test data.
-}
-\nop{
-There are 67 categories in total, and we manually group them into an hierarchy according to 
-This results in X documents, a height 5 taxonomy with 50 nodes total.
-}
-
-\noindent \textbf{Medicine}
-The Medicine corpus is obtained by crawling abstracts from Pubmed\footnote{\url{https://www.ncbi.nlm.nih.gov/pubmed/}}, and we directly take the top 3 level of 
-the Medicine subject headings\footnote{\url{https://www.nlm.nih.gov/mesh/meshhome.html}} under the top level category "Organisms", "Analytical, Diagnostic and Therapeutic Techniques, and Equipment" and "Psychiatry and Psychology" as the taxonomy.
-
-\subsubsection{Downstream prediction}
-
-\noindent \textbf{MNLI} Multi-Genre Natural Language Inference is a large-scale, crowdsourced entailment classification task. Given a pair of sentences, the goal is to predict whether the second sentence is an entailment, contradiction, or neutral with respect to the first one.
-
-\noindent \textbf{QQP} Quora Question Pairs is a binary classification task where the goal is to determine if two questions asked on Quora are semantically equivalent.
-
-\noindent \textbf{QNLI} Question Natural Language Inference is a version of the Stanford Question Answering Dataset which has been converted to a binary classification task. The positive examples are (question, sentence) pairs which do contain the correct answer, and the negative examples are (question, sentence) from the same paragraph which do not contain the answer.
-
-\noindent \textbf{CoLA} The Corpus of Linguistic Acceptability is a binary single-sentence classification task, where the goal is to predict whether an English sentence is linguistically “acceptable” or not.
-
-\noindent \textbf{STS-B} The Semantic Textual Similarity Bench-mark is a collection of sentence pairs drawn from news headlines and other sources. They were annotated with a score from 1 to 5 denoting how similar the two sentences are in terms of semantic meaning.
-
-\noindent \textbf{MRPC} Microsoft Research Paraphrase Corpus consists of sentence pairs automatically extracted from online news sources, with human annotations for whether the sentences in the pair are semantically equivalent.
-
-\noindent \textbf{RTE} Recognizing Textual Entailment is a binary entailment task similar to MNLI, but with much less training data.
-
-\noindent \textbf{WNLI} Winograd NLI is a small natural language inference dataset deriving from. The GLUE webpage notes that there are issues with the construction of this dataset, and every trained system that’s been submitted to GLUE has has performed worse than the 65.1 baseline accuracy of predicting the majority class. We therefore exclude this set out of fairness to OpenAI GPT. For our GLUE submission, we always predicted the majority class.
-
-
-\subsection{Performance evaluation}
-We presented our experimental results below, divided by the specific tasks: predicting similarity between pair of sequences, i.e. text similarity, 
-predicting label from sequence, i.e. text classification, 
-and predicting the sequence itself, i.e. language modelling. 
-All the code, pre-processed data and hyper-parameter configurations will be released to public.
-
-
-
-\noindent \textbf{Predicting the similarity between pair of sequences}
-We evaluate our approach over the task of predicting the similarity between pair of sequences, using the Quora dataset. The result is shown in \autoref{tab-seq-pair}, where the performance is measured using the cross entropy loss as well as prediction accuracy. Again the n-gram embedding bring benefits to the model, for example, adding n-gram embedding as word replacement to CNN architecture reduce the loss by 5.7\%.
-
-\noindent \textbf{Predicting label from sequence}
-The results for different datasets and different models are shown in \autoref{tab-seq-to-label}. For each task, we measure its performance via the cross entropy loss, as well as the prediction accuracy. We can see that adding our n-gram approach brings positive benefit to different architectures, according to both metric, with the improvement in loss function more evident. For example, adding n-gram embedding to the LSTM model reduce the loss by 20\%, and 7\%, for each respective dataset.
-
-
-\begin{table*}[thb]
+\begin{table*}[thbH]
 \centering
 \small
-\begin{tabular}{lcclccc} 
+\begin{tabular}{lcccccc} 
 \toprule
-Datasets / Reported Accuracy         & Accuracy & Vocab                & Methods             & AUC         & Vocab@-3\% & Vocab@-5\%  \\ 
+Datasets                                  & Training strategy                & Methods   & Evaluation~Loss ~ & Improvement            & ~Training Loss~        & Improvement              \\ 
 \midrule
-\multirow{4}{*}{Snips / 96.7~\cite{DBLP:conf/interspeech/LiuL16}} & 95.9       &  \multirow{4}{*}{11000} & Frequency       &  77.4    & 81         & 61          \\
-                       & 95.9       &                        & TF-IDF           &   77.6   & 81           & 62          \\
-                       & 95.6       &                        & Group Lasso       &   82.1   & 77           & 52\\
-                       & 96.0 &                        & VVD & \textbf{82.5}  & \textbf{52}  & \textbf{36}         \\ 
-\midrule
-\multirow{4}{*}{ATIS-Flight / 94.1~\cite{goo2018slot}}  & 93.8       &  \multirow{4}{*}{724}    & Frequency      &  70.1   & 33           & 28    \\
-                       & 93.8       &                        & TF-IDF           &  70.5  & 34          & 28\\
-                       & 93.8       &                        & Group Lasso      &  72.9  & 30           & 26\\
-                       & 94.0       &                        & VVD & \textbf{74.8}  & \textbf{29}  & \textbf{26}  \\
+\multirow{6}{*}{Sample Text} & \multirow{2}{*}{Bert Finetune} & Base   & 0.39                & -                      & 0.001                     & -                        \\
+                                               &                                & \BertMWE         & 0.290                & -25.7\%           & 0.000            & -66.7\%              \\
+\cline{2-7}
+                                               & \multirow{2}{*}{Bert Feature}  & Base  & 3.272                & -                      & 2.074                     & -                        \\
+&                                & \BertMWE      & 2.35                & -28.2\%                      & 1.139                     & -45.1\%                       \\ 
 \midrule
 \midrule
-\multirow{5}{*}{AG-news / 91.1~\cite{zhang2015character}}     & 91.6       &     \multirow{4}{*}{61673} & Frequency    &  67.1 &    2290        & 1379\\
-                             & 91.6       &                        & TF-IDF          &     67.8    &    2214     &    1303 \\
-
-                             & 91.2       &                        & Group Lasso         &  68.3   &    1867     &  1032 \\
-                             & 91.6       &                        & VVD & \textbf{70.5}  &  \textbf{1000}  & \textbf{673}   \\ 
-\midrule
-\multirow{4}{*}{DBPedia / 98.3~\cite{zhang2015character}}     & 98.4       &  \multirow{4}{*}{563355} & Frequency          &  69.7 &    1000    & 743            \\
-                             & 98.4       &                        & TF-IDF           &   71.7    & 1703           & 804      \\
-
-                             & 97.9       &                        & Group Lasso         &     71.9   &     768        &    678        \\
-                             & 98.5       &               & VVD & \textbf{72.2}  & \textbf{427}   & \textbf{297}   \\ 
-\midrule
-\multirow{4}{*}{Sogou-news / 95.0~\cite{zhang2015character}}  & 93.7       & \multirow{4}{*}{254495}  & Frequency     & 70.9  & 789 & 643 \\
-                             & 93.7       &                        & TF-IDF           & 71.3    & 976  &  776      \\
-                             & 93.6       &                        & Group Lasso      & 73.4  &  765 &  456 \\
-                             & 94.0       &                        & VVD & \textbf{75.5}  & \textbf{312}   & \textbf{196}   \\ 
-\midrule
-\multirow{4}{*}{Yelp-review / 58.0~\cite{zhang2015character}} & 56.3       &    \multirow{4}{*}{252712} & Frequency           &  74.0        &      1315      &     683        \\
-                             & 56.3       &                        & TF-IDF           &     74.1      &     1630       &    754       \\
-
-                             & 56.5       &                        & Group Lasso         &    75.4       &  934       &     463     \\
-                             & \textbf{57.4}       &                        & VVD & \textbf{77.9}      & \textbf{487} & \textbf{287}   \\
+\multirow{6}{*}{Sample Large} & \multirow{2}{*}{Bert Finetune} & Base   & 2.768                & -                      & 2.552                     & -                        \\
+                                               &                                & \BertMWE      & 1.866                & -32.1\%                      & 1.670                     & - 34.56\%                       \\ 
+\cline{2-7}
+                                               & \multirow{1}{*}{Bert Feature}  & Base & 3.991                & -                      &         3.712            & -                        \\
+                                               &                                & \BertMWE         & 3.918                 & -1.8\%           & 3.654            & -1.6\%              \\
 \midrule
 \midrule
-\multirow{4}{*}{SNLI / 86.7~\cite{DBLP:conf/naacl/WilliamsNB18}} & 84.1     &  \multirow{4}{*}{42392} & Frequency           &   72.2   &   2139      &  1362 \\
-                      & 84.1     &                        & TF-IDF              &  72.8    &    2132   &      1429 \\
-                      & 84.6     &                        & Group Lasso         &  73.6    &    1712  &      1093 \\
-                      & \textbf{85.5}     &                        & VVD & \textbf{75.0} & \textbf{1414} & \textbf{854}  \\
+\multirow{6}{*}{WikiText-2} & \multirow{2}{*}{Bert Finetune} & Base   & 1.851                & -                      & 0.588                                & -                        \\
+&                                & \BertMWE      & 1.390                & -24.9\%                      & 0.489          & -16.8\%                       \\ 
+\cline{2-7}
+                                               & \multirow{2}{*}{Bert Feature}  & Base & 2.700                & -                      & 2.511                     & -                        \\
+                                               &                                & \BertMWE         & 2.669                & -1.1\%           & 2.491            & -0.8\%              \\
 \midrule
-\multirow{4}{*}{MNLI / 72.3~\cite{DBLP:conf/naacl/WilliamsNB18}} & 69.2     &  \multirow{4}{*}{100158} & Frequency           &   78.5   & 1758         &  952        \\
-& 69.2     &                        & TF-IDF              &   78.7  &   1656      & 934 \\
-& 70.1     &                        & Group Lasso         &   79.2    & 1466         &  711 \\
-& \textbf{71.2}     &                        & VVD &  \textbf{80.1} &  \textbf{1323}  & \textbf{641} \\
+\midrule
+\multirow{6}{*}{Arxiv CS} & \multirow{2}{*}{Bert Finetune} & Base   & 2.560                & -                      & 2.336                     & -                        \\
+                                               &                                & \BertMWE      & 2.137                & -16.5\%                      & 1.859                     & -20.4\%                       \\ 
+\cline{2-7}
+                                               & \multirow{2}{*}{Bert Feature}  & Base & 3.306                & -                      & 3.072                     & -                        \\
+                                               &                                & \BertMWE         & 3.277                & -0.9\%           &  3.049            & -0.7\%              \\
+\midrule
+\midrule
+\multirow{6}{*}{Arxiv Math} & \multirow{2}{*}{Bert Finetune} & Base   & 1.658                & -                      & 1.399                     & -                        \\
+                                               &                                & \BertMWE      & 1.649                & -0.5\%                      & 1.399                     & -0\%                       \\ 
+\cline{2-7}
+                                               & \multirow{2}{*}{Bert Feature}  & Base & 3.131                & -                      & 2.928                     & -                        \\
+                                               &                                & \BertMWE         & 3.024                & -3.4\%           & 2.813            & -3.9\%              \\
+\midrule
 \bottomrule
 \end{tabular}
-\caption{Experimental Results on various NLP tasks and datasets on the proposed metrics in~\autoref{sec:metrics}. Bold accuracy means the result is statistically significantly better than the competitors. }
-\label{tab:result}
+\caption{Experimental Results on text modeling}
+\label{tab:text_modeling}
 \end{table*}
 
 
 
 
-\noindent \textbf{Predicting the sequence itself}
-We apply our n-gram embedding  approach to task of predicting sequences itself, using the Arxiv CS and Pubmed dataset. To evaluate the result of n-gram embedding modification strategy, we only keep the data instance when there exists at least 1 free base entity in the text. The results are shown in \autoref{tab-seq-modeling}. We can see that adding the n-gram embedding brings clear benefit to the CNN model, reducing its perplexity on both datasets by a large margin. The results on the LSTM model varies from dataset: the loss on Arxiv CS is reduced by 10\%, but the loss on Pubmed is not reduced much, and even worse though, is that the accuracy comes down from 0.08\% to 0.06\%. 
- We attribute this to the fact that plain LSTM without attention may not fully enjoy the additional information that n-gram embedding brings to the network, and these extremely low accuracies may not be fully capture the performance of the model.
+
+%We follow the original pre-training procedure for finetuning and evaluating different approaches, by first pre-processing the input corpus following the mask-sample-replace procedure for training the masked language model, and using the the sum of the mean masked LM likelihood and mean next sentence prediction likelihood as the objective function. 
+%In order to have a fair comparison for the MWE based approaches, we prevent the information "leakage" from the MWE in the sentence that may contain the masked tokens, by discarding in the masking stage any MWE in the input if there is any overlap between the MWE and the masked tokens. The evaluation metric is then obtained by measuring the same objective function as in the training set as in a separate evaluation set.
+%We carry out the text modeling task capability over several representative dataset across various domains, as described by the datasets listed below. 
+
+
+%We have collected the following corpus, covering the domain of computer science, physics \& mathematics and medicine.
+% The statistics of these datasets are summarized in Table S1, and the details are described below.
+
+\noindent \textbf{Sample Text} 
+We first test the validity of our approaches over a simple 30-sentence corpus
+obtained from the commonly adopted Pytorch implementation of Bert repository \footnote{\url{https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/samples/sample_text.txt}}.
+
+
+\noindent \textbf{Sample Large}
+The Sample Large corpus is also provided by Pytorch Bert repository  \footnote{\url{https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/samples/sample_text.txt}}
+which consists of about 500K natural language text to test the validity of our approaches in a large scale setting.
+\footnote{\url{https://ext-bert-sample.obs.eu-de.otc.t-systems.com/small_wiki_sentence_corpus.txt}}
+
+\noindent \textbf{WikiText-2} 
+The WikiText-2 corpus is a cleaned Wikipedia corpus proposed by Merity et.al \cite{merity2016pointer} as a standard benchmark for language model in the general domain. 
+Although larger version of the Wikipedia corpus exists, we adopt the WikiText-2 as the benchmark because the model is already initialized with the weights pretrained from the entire Wikipedia \cite{devlin2018bert} and therefore introduciing larget training corpus will not provide much more information.
+
+
+\noindent \textbf{Arxiv Computer Science} We evaluate the performance of our approaches for modeling text for technical domains, which obtained by crawling titles and abstracts of 70K the papers from the open access repository \url{arxiv.org} under the top level category of computer science from 2008 to 2018. 
+
+
+\noindent \textbf{Arxiv Maths} We also collect another dataset from the repository \url{arxiv.org}, which is obtained by crawling about 65K paper abstracts from \url{arXiv.org}, under the top level category "mathematics". 
+
+
+\subsection{Supervised label prediction}
+we next evaluate the proposed approaches over an array of tasks that will take the text as input and learn to predict additional supervision labels to solve downstream analytical tasks. 
+For this we follow the standard the benchmark setting of 
+General Language Understanding Evaluation \cite{wang2018glue}, which is a collection of many supervised label prediction tasks for natural language text.
+Since GLUE does not distribute labels for the Test set and original evaluation was measured on the dev set \cite{devlin2018bert}, we use the evaluation metrics on the dev set as the Test performance. 
+Specifically, we choose to evaluate our methods over the following dataset.
+
+\noindent \textbf{CoLA} The Corpus of Linguistic Acceptability is a binary classification task for binary text classification,
+where given a single sentence, the goal is to predict whether it is grammatically acceptable. We follow the author \cite{wang2018glue} to use Mathews correlation coefficient as the evaluation metric.
+
+\noindent \textbf{MRPC} The Microsoft Research Paraphrase Corpus is a collection of sentence pairs from online news sources for paraphrase detection. Given a pair of sentence, the goal is to predict whether they are semantically equivalent. 
+Because the classes are imbalanced, the author \cite{wang2018glue} suggest to use both accuracy and F1 score.
+
+
+\noindent \textbf{QQP} The Quora Question Pairs dataset is another text similarity  dataset consisting of pair of questions from Quora, which follows the same from as \textbf{MPRC}. It also has imbalanced classes and therefore both accuracy and F1 score are reported.
+
+
+\noindent \textbf{STS-B} 
+The Semantic Textual Similarity Benchmark is a yet another paraphrase detection dataset from news headlines,  video and image captions and natural language inference data. Given a pair of sentence, the goal is to predict a score from 1 to 5 measuring the strength of their semantic similarity. The author \cite{wang2018glue} suggest to use Pearson and Spearman correlation coefficients as the performance measure.
+
+
+\noindent \textbf{MNLI} The Multi-Genre Natural Language Inference dataset is a crowdsourced collections of entailment classification data collected by William et.al. \cite{williams2017broad}. 
+Given a pair of sentences, the goal is to predict whether the first sentence (premise) entails or contradicts the second sentence(hypothesis), or neither of the above.
+
+\noindent \textbf{QNLI} The Question Natural Language Inference dataset is a converted version of the Stanford Question Answering Dataset where given a pair of question and sentence, the goal is to predict whether the sentence contains the answer to the question.
+
+\noindent \textbf{RTE} The Recognizing Textual Entailment dataset is a collection of entailment dataset in the same form as \textbf{MNLI} constructed based on news and Wikipedia.
+
+\noindent \textbf{WNLI} The Winograd Natural Language Inference dataset is converted from Winograd Schema Challenge whetre goal is to determine the the referent of pronouns in the given sentence. Given a input pair of sentence, the goal is predict whether the second sentence is equivalent to the first one, by replacing the pronoun with the correct referent.
+
+
+
+
+\subsection{Performance evaluation}
+\noindent \textbf{Text modeling}
+We first evaluate our approach over the task of modeling the text, under the Bert-pretraining objective \cite{devlin2018bert}, the results are shown in \autoref{tab:text_modeling}. We omit the the \BertMWE-simple model for clearity because it generate similar performance with the \BertMWE, possibly because it can scale its embedding parameters to simulate the dropout behavior.
+We can see from the results that \BertMWE model is able to efficiently utilize the training set, (by reducing the training error), while at the same time significantly reduce the loss on evaluate set on most of the benchmarks. Another observation is that, the \BertMWE, when it achieves similar performance over the evaluation, it also behaves similarly on the training set. In other words, adding the additional will mostly not lead to overfitting, and in many cases, let the model learn better structure of the data.
+
+\noindent \textbf{Supervised label prediction}
+We evaluate our approach over the task of predicting the external supervised labels, as shown in table \autoref{tab:glue_results},
+where we list the performance of each several Bert based models along with several additional methods results obtained from the Glue online benchmark to serve as reference.
+We can see the \BertMWE is able to build upon the already very strong Bert base model, and achieve statistically significant improvement over a wide range of tasks, and outperform other strong baseline methods.
 
 
 
 
 
-In this section, we evaluate the proposed methods with extensive experiments across several technical domains and demonstrate its efficiency and effectiveness. 
-
-
-\noindent \textbf{Overall performance}
-We present the results of the overall performance evaluation in \autoref{table-overall}. Hiercon achieves the best performance overall by effectively deriving concept representation for documents and hierarchy labels, 
-and comprehensively utilizing all the concept similarity,
-and allowing them to flow to downstream relevance computation.
-Pretrained BERT also works relatively well, which confirms the validity of training label, and the generalizability of pre-trained weights; 
-WeSHClass is able to improve it by efficiently utilizing training signals.
-Dataless is able to achieve coarse level categorization, as seen 
-by the tree accuracy, but in general suffers bad performance when  the knowledge base coverage is low.
+\subsection{Case study}
 
 
 
 
 
-\subsection{Qualitative analysis}
 
-We compare the proposed vocabulary selection algorithm against several strong baselines on a wide range of text classification tasks and datasets. 
+To provide further insights about the learning process, we present the learning curve and evaluation curve for the text modeling datasets used in the performance evaluation, as shown in \autoref{fig:learning-curve}, from which we can clearly see that adding the additional structure \BertMWE gives significant impact over the base Bert model, through better exploitation of the training data as well as a significantly better generalization error.
 
-baseline: bert
-bert fine tune 3
 
-vary vocab size
-vary no vb
+
+
+\nop{
+\noindent \textbf{Interpretation of MWE weights}
+By inspecting the model weights, we can derive better,
+intuitively, MWEs associated with high weights and less dropout 
+valid
+critical to the task
+The results are shown in \autoref{table-top-concepts} shows some of the most discriminative \& indiscriminative MWEs. We can see that the concept representation of taxonomy nodes is able to capture latent semantics and make meaningful distinctions on the concept level.
+
 
 
 
@@ -274,12 +298,7 @@ equilibria (Game Theory)} & \it{goal} \\ & \it{attacks (Security)} & \it{techniq
 \label{table-top-concepts}
 \end{table}
 
-
-\noindent \textbf{Discriminative \& indiscriminative concepts}
-If we treat each concept as a document and perform classification on it, we can obtain the direct relevance between concepts and taxonomy nodes. \autoref{table-top-concepts}
-shows some of the most discriminative \& indiscriminative concepts. We can see that the concept representation of taxonomy nodes is able to capture latent semantics and make meaningful distinctions on the concept level.
-
-
+}
 
 
 

@@ -75,13 +75,14 @@ Instead, we follow  variational inference principle \cite{} to approximate the m
 We will first describe our choice of the variational family $\mathcal{Q}$, and then continue to specify the variantional inference procedure.
 
 
-The goal of the \BertMWE is to learn to capture both the individual non-compositionality from the MWEs while fully utilize the modeling power of the deep self-attention network. To that end we propose the a procedure to parameterize our distribution family $\mathcal{Q}$, 
+The goal of \BertMWE is to learn to capture both the individual non-compositionality from the MWEs while fully utilizing the modeling power of the deep self-attention network. 
+To that end we propose the a procedure to parameterize our distribution family $\mathcal{Q}$, 
 as a probabilistic generative process. 
 The basic idea is to view the output target as a mixture of possible models applied to the given input x, 
 while including the selection of MWEs as integrated part of the network architecture.
 The decision for the inclusion of MwEs is make in a hierarchical manner by a global factor controlling the joint quality of the MWE architecture as well as independent qualities for each MWE.
 
-Specifically, we assuming the network is described by of mean parameter matrixes $W$, and a prior distribution for Bernoulli variables, parameterized by $\Pi$ and $\p_i$ where $i$ range across of the vocabulary of all possible MWEs $v$. The generation process can be described as
+Specifically, we assume the network is described by of mean parameter matrixes $W$, and a prior distribution for Bernoulli variables, parameterized by $\Pi$ and $\p_i$ where $i$ range across of the vocabulary of all possible MWEs $v$. The generation process can be described as
 \begin{enumerate}
     \item Initialize the network $\Theta$ to skip any MWE in the input by multiplying correspondings parameters in $W$ by zero
     \item Choose global mwe decision variable 

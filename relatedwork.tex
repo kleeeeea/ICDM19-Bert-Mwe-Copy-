@@ -3,9 +3,7 @@
 
 \section{Related work}
 \subsection{text modeling for neural network}
-has become prevalent in recent years, due to their ability in capturing the meaning of words, as shown in 
-tasks such as word similarity, analogy, relation prediction \cite{turian2010word, pennington2014glove, mikolov2013distributed}.
-Furthermore, it has become the dominant, if not the only approach, for deep learning models to process raw text into numerical form, and feed into downstream neural network modules to solve various kinds of NLP tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}.
+Single word based modeling has long been the dominant, if not the only approach, for deep learning models to process raw text into numerical form, and feed into downstream neural network modules to solve various kinds of NLP tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}.
 A lot of methods has been proposed to modify the original word embedding. One recent trend is to go "small", and try to exploit sub-word level information, such as character, or sub-sequence of characters inside a word \cite{wieting2016charagram, bojanowski2016enriching, pinter2017mimicking}, by borrowing information from words with similar subsequence of characters, they are able to infer the meaning of rare words and use it for downstream tasks. 
 Others have kept the unigram formulation, and try to better learn the embedding by extending it to multiple word sense \cite{neelakantan2015efficient, athiwaratkun2017multimodal}, 
 different type of contexts \cite{levy2014dependency, melamud2016role}, 
@@ -21,32 +19,13 @@ the number of MWEs in a speaker's lexicon is of the same order of magnitude as t
 Specialized domain vocabulary, such as terminology, overwhelmingly consists of MWEs
 and \cite{justeson1995technical} claims that 
 "when native English forms are used to create new terms, it most often takes at least two words to adequately specify a meaning", and that "often, well established one-word terms are Greek or Latin forms made up of more than one root, e.g. aerodynamics".
+Motivated by such, the research on has already been a focus on the community. For example, the  line of work on key term extraction in scientific corpus \cite{beliga2015overview, zhang2008comparative} learns to detect meaningful concepts by  generating noun phrases as candidates, and utilized statistical occurrence and co-occurrence measures \cite{frantzi2000automatic}, semantic information from knowledge base \cite{medelyan2006thesaurus}, rank the candidates \cite{nguyen2007keyphrase}. Important further application on open information extraction \cite{banko2007open}, taxonomy construction \cite{wu2012probase, carlson2010toward}, entity recognition and typing \cite{ren2016automatic, facetgist} are all based on it.
+Yet another line of related work is on quality phrase mining \cite{segphrase, autophrase, li2018concept}, which is able to adaptively recognize concept occurrence based on concept quality, and exploited important statistical features, grammartical features and neural embedding features \cite{autophrase} as well as knowledge base entity names to mine concepts from a document in a comprehensive manner.
+
+
+
+\subsection{Application of text-non compositionality}
 In fact, researches in information extraction and text mining has been directly using the occurrences of these multi word structure, e.g. based on the POS-tag patterns, to harvest natural concepts or entities from text data, and to further construct structured knowledge bases \cite{banko2007open, wu2012probase, ren2016automatic}. 
-Moreover, phrases, or n-gram, has been widely used as features for traditional NLP models that heavily rely on feature engineering \cite{furnkranz1998study} or for certain application such as statistical machine translation or parsing \cite{koehn2009statistical, cafferkey2007multi, savary2015parseme}. There are also phrase based neural network model that has been designed, especially in the area of machine translation \cite{cho2014learning, huang2017neural}. However their model is specific to the application and in general not applicable to other NLP tasks.
-
-\subsection{downstream application of text non-compositionality}
-Another line of related work is on 
-concept/entity aware representation
-%\subsection{Information Retrieval}
-, which utilize information from a knowledge base, such as entity description, entity type or links to other entities to perform query expansion \cite{xiong2015query, dalton2014entity}, 
-and improves relevance computation \cite{shen2018entity}, or ranking \cite{xiong2015esdrank} .
-Explicitly annotated entities in documents have been utilized to represent text \cite{xiong2017explicit, xiong2017word}, which are then used to derive features to train the ranking model. However, directly adapting these information retrieval approaches to hierarchical classification setting, where one needs to assign each document into the correct category, is rather challenging as the query needs to cover the content of the entire scientific field.
-
-Entities, such as people, locations, or abstract concepts, are natural units for organizing and retrieving information [10]. Previous
-studies found that over 70% of Bing’s query and more than 50%
-of traffic in Semantic Scholar are related to entities [12, 39]. The
-recent availability of large-scale knowledge repositories and accurate entity linking tools have further motivated a growing body of
-work on entity-aware ranking models. These models can be roughly
-categorized into three classes: expansion-based, projection-based,
-and representation-based.
-The expansion-based methods use entity descriptions from knowledge repositories to enhance query representation. Xu et al. [40]
-use entity descriptions in Wikipedia as pseudo relevance feedback
-corpus to obtain cleaner expansion terms; Xiong and Callen [36]
-utilize the description of Freebase entities related to the query for
-query expansion; Dalton et al. [7] expand a query using the text
-fields of the attributes of the query-related entities and generate
-richer learning-to-rank features based on the expanded texts.
-The projection-based methods try to project both query and document onto an entity space for comparison. Liu and Fang [20] use
-entities from a query and its related documents to construct a latent
-entity space and then connect the query and documents based on
-the descriptions of the latent entities. 
+Another line of work is on concept/entity aware representation, which utilizes information from a knowledge base, such as entity description, entity type or links to other entities to perform query expansion \cite{xiong2015query, dalton2014entity}, 
+and improves relevance computation \cite{shen2018entity}, or ranking \cite{xiong2015esdrank}.
+Explicitly annotated entities in documents have been utilized to represent text \cite{xiong2017explicit, xiong2017word}, which are then used to derive features to train a ranking model. 
