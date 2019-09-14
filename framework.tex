@@ -1,7 +1,7 @@
 %!TEX root =  main.tex
 
 
-\section{Our approach}
+\section{Our approach}\label{sec:bert_mwe_approach}
 In this section, we formally describe our \BertMWE approach.
 We will start by formally describing our modeling framework in a probabilistic setting, 
 and then introduce our approach for modeling the posterior distribution, 
@@ -26,26 +26,26 @@ and in addition, there are a set of candidate multi-world expressions $(w'_1, ..
 In a typical self-attention network such as the original Bert model \cite{devlin2018bert}, the first step is to transform the input sequence into an unordered set, 
 and the original position information is captured using the position embedding mechanism \cite{vaswani2017attention}. Specifically, the  input will be represented in the form of a permutation invariant set $\{u_1, ..., u_n\}$, where each element $u_i=(w_i, pos_i)$ include both the token $w_i$ and its position $pos_i$, which equals to its index in the original sequence $i$.
 
-As illustrated in \autoref{fig:variational}, each element in the input then goes through the embedding layer and are represented as a set of permutation invariant embeddings vectors $\{E_1, ..., E_n\}$, 
+As illustrated in \autoref{fig:variational}, each element in the input then goes through the embedding layer and are represented as a set of permutation invariant embedding vectors $\{E_1, ..., E_n\}$, 
 \cite{vaswani2017attention}, 
 which then goes through a few numbers of inter-connected self-attention layers to be transformed into the final representation, 
 $\{T_1, ..., T_n\}$ to be used for specific tasks, such as sequence labeling and classification \cite{devlin2018bert}.
 
 We exploit the crucial observation that input to the downstream self attention network are presented as an unordered set, with the original ordering in the sequence encoded as position embedding,
-and proprose an \textit{homogeneous injection} approach to incorporate the MWEs into the network, by feeding the set of MWEs along with the original unordered set to the network, with their position encoded analogously.
+and propose a \textit{homogeneous injection} approach to incorporate the MWEs into the network, by feeding the set of MWEs along with the original unordered set to the network, with their position encoded analogously.
 
 
 Specifically, given a set of candidate multi-world expressions $(w'_1, ..., w'_m)$, 
 we will similarly transform them into a set of candidate multi-world expressions $(u'_1, ..., u'_m)$, where each element $u_i=(w'_i, pos'_i)$ includes the MWE $w'_i$ and its location, which is derived as a function of the span location $f(st_i, end_i)$ in the original sequence $pos'_i$ \footnote{in this work we instantiate it as the average function $f(st_i, end_i) = \lceil \frac{st_i, end_i}{2} \rceil $}.
-Then, analagously, we embed the multi-world expressions $(u'_1, ..., u'_m)$ into embeddings vectors $\{E'_1, ..., E'_m\}$.
+Then, analagously, we embed the multi-world expressions $(u'_1, ..., u'_m)$ into embedding vectors $\{E'_1, ..., E'_m\}$.
 As shown in \autoref{fig:variational}, the embedding vectors $\{E'_1, ..., E'_m\}$ are concatenated with the original vectors, and the newly concatenated set vectors 
 $\{E_1, ..., E_n, E'_1, ..., E'_m\}$ are in the exact same form of the original input and fed to the exact same model as before.
 
 The challenge with this approach, however, is that we do not know apriori how many of the candidate MWEs are truly non-compositional and  important for downstream prediction tasks:
-Simply adding all of them into the original tokens' embedding would potentially introduce a large amount of noise to the data and obfuscate the original inputs. Blindly ignoring some candidates might miss important non-compositionality information.
-we need a way to distinguish good from the bad, and dynamically infer the non-compositionality, along with the set of parameters contained in the deep self-attention networks architecture.
+Simply adding all of them into the original tokens' embedding would potentially introduce a large amount of noise to the data and obfuscate the original inputs; Blindly ignoring some candidates might miss important non-compositionality information.
+We need a way to distinguish the good from the the bad, and dynamically infer the non-compositionality, along with the set of parameters contained in the deep self-attention network architecture.
 
-We formulate this using a principled Bayesian probabilistic framework. 
+We formulate this with a principled Bayesian probabilistic framework. 
 Given a dataset $\mathcalD$ containing a set of $N$ observations of tuples $(x,y)$,  $x$ is the input text and $y$ is the target labels of interest,
 if we use  $m_{MWE}$ to denote the model to \textit{select} from the set of candidate multi-world expressions, and 
 $m_{Bert}$ to denote the weights and architectures for the original self-attention network, the task can then be formally described as a posterior probability inference over the space of all possible models $m_{MWE} \in M_{MWE}, m_{Bert} \in M_{Bert}$, as the following
@@ -71,8 +71,8 @@ $m_{Bert}$ to denote the weights and architectures for the original self-attenti
 
 
 The above inference problem is intractable because of the computing the true posterior distribution involves integrals over all possible model spaces which is computationally intractable. 
-Instead, we follow  variational inference principle \cite{ranganath2014black} to approximate the model posterior with a family of variational distribution $\mathcal{Q}$ over the models, and the goal is to find find a specific distribution $q(m_{MWE}, m_{Bert}) \in \mathcal{Q}$ that are closest to the exact posterior distribution $P(m_{MWE}, m_{Bert} | \mathcalD)$.
-We will first describe our choice of the variational family $\mathcal{Q}$, and then continue to specify the variational inference procedure.
+Instead, we follow the variational inference principle \cite{ranganath2014black} to approximate the model posterior with a family of variational distribution $\mathcal{Q}$ over the models, and the goal is to find a specific distribution $q(m_{MWE}, m_{Bert}) \in \mathcal{Q}$ that are closest to the exact posterior distribution $P(m_{MWE}, m_{Bert} | \mathcalD)$.
+We will first describe our choice of the variational family $\mathcal{Q}$, and then  specify the variational inference procedure.
 
 
 The goal of \BertMWE is to learn to capture both the individual non-compositionality from the MWEs while fully utilizing the modeling power of the deep self-attention network. 
@@ -96,11 +96,11 @@ On a more abstract level, we can think of the network as being described by a me
 \end{enumerate}
 
 
-We can also represent \BertMWE model using the probabilistic graphical notation, as shown in \autoref{fig:variational}. 
+We can also represent \BertMWE model using the probabilistic graphical model notation, as shown in \autoref{fig:variational}. 
 On the top levels are parameters $\Pi$ and $\pi_i, i \in V$, $W$, which are corpus level parameters. Then for each of the $N$ training instance, the set of Bernoulli latent variables
 $B$, $\beta_i, i\in v$ are drawn, from which we obtain a specific instantiation of the neural network parameterized by $\Theta$. And finally, we pass the input $x$ through the neural network, and take the output of the neural network as the final output of the model $y$.
 
-Given the described variational distribution $Q(\Theta | W, \Pi, \{\pi_i | i \in V\})$  given  
+Given the described variational distribution $Q(\Theta | W, \Pi, \{\pi_i | i \in V\})$,   
 the Bernoulli parameters $\Pi$ and $\pi_i$, and the mean parameter matrices $W$,
 The expected log-likelihood for the observed data $\mathcalD$  can be specified as 
 \begin{align}
@@ -111,7 +111,6 @@ The expected log-likelihood for the observed data $\mathcalD$  can be specified 
 & \quad \quad \quad \quad p(y \vert f^{\Theta}(x)) )
 \label{eq:exp}
 \end{align}
-
 where the conditional distribution 
 $p(B | \Pi)$, $p(\beta_i | \oi), i\in v$ are given by the Bernoulli distribution with $\Pi$ and $\pi_i, i\in v$ being the mean parameter, 
 $p(\Theta \vert W, B, \{\beta_i, i \in V\})$ specifies the outcome of zeroing and recovering the networks weights $p(\Theta$ according to the Bernoulli variable $B, \{\beta_i, i \in V\})$ as described by the generative process above,

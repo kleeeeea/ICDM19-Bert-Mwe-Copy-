@@ -1,23 +1,22 @@
 %!TEX root =  concept_mining.tex
 
 
-\section{Related work}
+\section{Related work}\label{sec:bert_mwe_related_work}
 \subsection{Neural methods for language modeling and understanding}
-Representing text at word level has long been the dominant, if not the only norm, for deep learning models to address natural language related  tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}. 
-One possible variant is to go "small", and try to exploit sub-word level information such as character, or sub-word \cite{wieting2016charagram, bojanowski2016enriching, pinter2017mimicking}. By borrowing information from words with similar subsequence of characters, they are able to infer the meaning of rare words and apply it in downstream tasks. 
+Representing text at word level has long been the dominant, if not the only norm, for deep learning models to address natural language-related tasks  \cite{collobert2011natural, wu2016google, conneau2017very, severyn2015learning}. 
+One possible variant is to go "small", and try to exploit sub-word level information such as character, or character n-gram \cite{wieting2016charagram, bojanowski2016enriching, pinter2017mimicking}. By borrowing information from words with similar subsequence of characters, they are able to infer the meaning of rare words and apply it in downstream tasks. 
 Others have kept the unigram formulation, and try to better learn the embedding by extending it to multiple word sense \cite{neelakantan2015efficient, athiwaratkun2017multimodal}, 
-different type of contexts \cite{levy2014dependency, melamud2016role}, 
-or by incorporating such as knowledge base to enforce hierarchy and similarity \cite{nickel2017poincare, faruqui2014retrofitting}. 
-% or to pass it through a language modeling layers before feeding it to downstream neural network in order to incorporate context information \cite{mccann2017learned, peters2018deep}.
-Finally, there is also a trend of going "big", that tries to embed multi-word phrases, or even sentence or paragraphs into vector space \cite{mikolov2013distributed, hill2015dictionary, arora2016simple}. 
-which mostly focus on \emph{intrinsic evaluation} of the learned embedding on how well it can represent the phrases and sentence.
+different types of contexts \cite{levy2014dependency, melamud2016role}, 
+or by incorporating external resources such as knowledge base to enforce hierarchy and similarity \cite{nickel2017poincare, faruqui2014retrofitting}. 
+Finally, there is also a trend of going "big", that tries to embed multi-word phrases, or even sentence or paragraphs into vector space \cite{mikolov2013distributed, hill2015dictionary, arora2016simple}.
+These methods mostly focus on \emph{intrinsic evaluation} of the learned embedding, i.e. how well it can represent the phrases and sentence.
 
 \subsection{non-compositionality discovery in text}
 The existence of atomic, non-composable phrases has been widely recognized and extensively studied \cite{sag2002multiword, baldwin2010multiword, constant2017multiword, hashimoto2016adaptive}. 
 Motivated by such, discovering these phrases have already been a central focus of the community, 
 ranging from noun phrase chunking, named entity recognition \cite{nadeau2007survey, baldwin2010multiword, pecina2006combining, sporleder2009unsupervised, hashimoto2008construction},
 key terminology extraction in scientific corpus \cite{beliga2015overview, zhang2008comparative}, statistical phrase mining \cite{segphrase, autophrase} to concept mining via embedding \cite{li2018concept}, 
-which leverages signals such as grammatical pattern, statistical significance, external knowledge bases, neural embedding or even large amount of labeled training examples to detect high quality single words or phrases as meaning bearing units, in the hope that it can be useful for downstream applications.
+which leverages extensive signals such as grammatical pattern, statistical significance, external knowledge bases, neural embedding or even large amount of labeled training examples to detect high quality single words or phrases as meaning bearing units, in the hope that it can be useful for downstream applications.
 
 
 \subsection{Application of text-non compositionality}

@@ -12,9 +12,9 @@ or technical terms such as "generative adversarial network" \cite{sag2002multiwo
 %Multiword expressions (MWEs) are linguistic objects containing two or more words and showing some degree of non-compositionality. For instance, the meaning of to kick the bucket (i.e. ‘to die’) cannot be predicted from the meaning of its components, while the (masculine) gender of un peau rouge (’redskin’ in French) is not inherited from its nominal component (peau ’skin’ is feminine).
 %MWEs encompass versatile linguistic objects: compounds (air brake), complex terms (random access memory), multiword named entities (European Bank for Reconstruction and Development), light-verb constructions (to take a nap), phrasal verbs (to make up for sth), idioms (to kick the bucket), proverbs (Fortune favours the bold.), etc Basic facts about MWEs are that: (i) they are prevalent in natural language texts – up to 40% of text items belong to MWEs (Gross and Senellart 1998, Sag et al. 2002);
 
-The existence of atomic, non-composable Multi-word expressions (MWE) in text data has been widely recognized :  Jackendoff et.al. \cite{jackendoff1997architecture} estimates that 
+The existence of atomic, non-composable Multi-word expressions (MWE) in text data has been widely recognized: Jackendoff et.al. \cite{jackendoff1997architecture} estimates that 
 the number of MWEs in a speaker's lexicon is of the same order of magnitude as the number of single words.
-This is especially the case for specialized domain, such as terminology. 
+This is especially the case for the specialized domains, such as terminology. 
 Justenson et.al. \cite{justeson1995technical} claims that 
 "when native English forms are used to create new terms, 
 it most often takes at least two words to adequately specify a meaning", 
@@ -27,7 +27,7 @@ Driven these observations are extensive applications such as information retriev
 
 %claims that our mental lexicon (vocabulary) of MWEs is as extensive as the one that is made up of single words, 
 
-Despite the its wide existence,  multi-word expression has been largely overseen by deep learning approaches, 
+Despite its wide existence, multi-word expression has been largely overseen by deep learning approaches, 
 whose typical processing pipeline goes like this:
 given a piece of input text, 
 we first tokenize it into a \textit{linear sequence representation} made up of single word tokens or word pieces,
@@ -38,7 +38,7 @@ and is thus contradicting with the existence of multi-word expressions, which ar
 
 \begin{table}
 \centering
-\caption{Example multi-word expression used in our }\label{tab:dataset-stats}
+\caption{Example multi-word expression used in our benchmark dataset}\label{tab:dataset-stats}
 
 \begin{tabular}{ll}
 \toprule
@@ -81,22 +81,17 @@ but the model for processing the original linear sequence representation still r
 
 Now the question becomes whether or not to dim out the effect of MWEs, and furthermore, which MWEs are "noise" that  we should dim out, and which MWE are crucial ones that we should not dim out?
 
-To that end, we propose the model, \Bert-Mwe , 
-which is a principled probabilistic framework  for us to reason with the original self-attention model with MWE, and selectively infer how much to “dim out” the original MWE, based on a posterior inference over the their non-composability.
+To that end, we propose the model, \BertMWE , 
+which is a principled probabilistic framework for us to reason with the original self-attention model with MWE, and selectively infer how much to “dim out” the original MWE, based on a posterior inference over their non-composability.
 by viewing the output as a mixture of all different possible latent selection on whether and how much to incorporate different MWEs into the network, and reasoning about these latent selections.
 Specifically, we aim to learn a distribution over all possible models  with different degrees of non-compositionality assigned to each specific MWEs,  so that at the end of model output, the marginal likehood of the observed model output is optimized.
-Then, we propose an efficient variational bayes procedure  to efficiently perform inference over the posterior model distribution, and provide an efficient implementation inside to incorporate into the state of deep  network. 
-
-In order to 
-it is critical for the model to be able to filter out noise false and capture cri, 
-To that end, we propose a principled probabilistic framework for inferring the network architecture and the natural language non-compositionality, 
-to dynamically add extra MWE information in a data-aware fashion
-that best supports the downstream predictive performance. 
-Specifically, we aim to learn a distribution over all possible model that with different degrees of non-compositionality assigned to each specific MWEs, and so that at the end of model output, the expected probability of the observed model output is optimized, averaged across all different model configurations.
-We then propose an efficient variational bayes algorithm to efficiently perform inference over the posterior model distribution, and provide an efficient implementation scheme to integrate it into the state of the art deep self attention network architecture. 
-
-We extensively evaluate the effectiveness of our approach over a wide range of tasks for language modeling and understanding, and demonstrate that \BertMWE consistently preserves and improves upon the state of the art baselines approaches such as the Bert model \cite{devlin2018bert}.
+Then, we propose an efficient variational bayes procedure  to efficiently perform inference over the posterior model distribution, and provide an efficient implementation to incorporate it into the state of art deep self attention network architecture. 
 
 
+We extensively evaluate the effectiveness of our approach over a wide range of tasks for language modeling and understanding, and demonstrate that \BertMWE consistently preserves and improves upon the state of the art baseline approaches such as the Bert model \cite{devlin2018bert}.
 
-The rest of the paper is organized as follows. In section 2 we provide a comprehensive review of previous work and further motivate our approach. In section 3 we discuss the preprocessing steps needed, and in section 4 we discuss our approach to incorporate the n-gram into deep learning model. We present experiment results in Section 5 and draw conclusion in Section 6.
+
+The rest of the paper is organized as follows. 
+In \autoref{sec:bert_mwe_related_work} we provide a comprehensive review of previous work and further motivate our approach. 
+In \autoref{sec:bert_mwe_approach} we present our \BertMWE model and discuss implementation details. 
+We present experimental evaluation in  \autoref{sec:bert_mwe_experiments} and draw conclusion in  \autoref{sec:bert_mwe_conclusion}.

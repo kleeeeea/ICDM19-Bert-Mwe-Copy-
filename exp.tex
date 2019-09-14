@@ -30,7 +30,7 @@ QNLI     & QA + NLI & News and Wikipedia   & \multirow{2}{*}{\begin{tabular}[c]{
 WNLI        & coreference + NLI & Fiction books   &        & 634 & 146  \\
 \bottomrule
 \end{tabular}
-\caption{An overview of different datasets under different classification tasks including description and sizes.}
+\caption{An overview of the benchmark datasets used for different tasks along with their description and statistics}
 \label{tab:dataset}
 \end{table*}
 
@@ -48,7 +48,7 @@ WNLI        & coreference + NLI & Fiction books   &        & 634 & 146  \\
 \label{fig:manual-eval2}
 \end{minipage}
 \vspace{-15pt}
-\caption{Learning and validation curve for the our datasets.}
+\caption{Learning and validation curve for the text modeling task}
 \label{fig:learning-curve}
 %\vspace{3pt}
 \end{figure*}
@@ -67,7 +67,7 @@ BiLSTM      & 11.6                                                              
 BiLSTM+Attn & \textcolor[rgb]{0.133,0.133,0.133}{\textcolor[rgb]{0.133,0.133,0.133}{18.6}} & \textcolor[rgb]{0.133,0.133,0.133}{\textcolor[rgb]{0.133,0.133,0.133}{83.9/76.2}} & 72.8/70.5                     & 72.8/709           & 74.3                     & 67.6          & 58.4~ ~~      & 65.1                      \\
 OpenAI GPT  & 45.4                                                                         & 82.3/-                                                                            & 70.3/-                        & 80.0/-             & 87.4                     & 82.1          & 56.0          & 65.1                      \\
 Bert        & 57.9                                                                         & 86.0/89.9                                                                         & 89.9/86.7                     & 89.6/89.2          & 90.8                     & 83.4          & 67.1          & 57.7                      \\
-\BertMWE-Simple     & 58.1                                                                         & 86.0/89.9                                                                         & 90.7/87.5                     & \textbf{90.0}/89.5 & 91.3                     & \textbf{84.0} & \textbf{72.2} & 56.3                      \\
+\BertMWE (Simplified)     & 58.1                                                                         & 86.0/89.9                                                                         & 90.7/87.5                     & \textbf{90.0}/89.5 & 91.3                     & \textbf{84.0} & \textbf{72.2} & 56.3                      \\
     \BertMWE        & \textbf{59.7}                                                                & \textbf{86.5/90.4~}                                                               & \textbf{90.9/87.7}            & \textbf{90.0/89.6} & \textbf{91.5}            & \textbf{84.0} & \textbf{72.2} & \textbf{63.4}             \\
 \bottomrule
 \end{tabular}
@@ -79,7 +79,7 @@ Bert        & 57.9                                                              
 
 
 
-\section{Experiments}\label{sec:experiments}
+\section{Experiments}\label{sec:bert_mwe_experiments}
 
 In this section we experimentally evaluate the proposed approach over an wide range of tasks across different domains and demonstrate its effectiveness over the state of the art baseline approaches.
 
@@ -89,7 +89,7 @@ In this section we experimentally evaluate the proposed approach over an wide ra
 \subsection{Setup}
 
 \noindent \textbf{Hardware Environment}
-The model training and preprocessing is conducted on a lab server with 3 
+The model training and prepossessing is conducted on a lab server with 3 
 GeForce RTX 2080 GPU card, 2 6-core Intel(R) Core(TM) i7-6800K CPU @ 3.40GHz CPU with 12GB memory. The longest experiments took no more than 3 days.
 
 
@@ -99,29 +99,32 @@ and
 we're mainly interested in how much it can \textit{improve} upon the basic Bert model, 
 we follow the exact same architecture, hyper-parameter and optimizer settings as suggested by 
 \cite{devlin2018bert} for each specific tasks 
-refer the reader to the original paper for details about the architecture and parameter.
+and refer the reader to the original paper for details about the architecture and parameter.
 
 \noindent \textbf{Model training and weight initialization}
-In order to more directly see the difference between the \BertMWE and the basic case Bert model, we will conduct the model training of \BertMWE in an \textit{incremental} fashion:
+In order to more directly see the difference between the \BertMWE and the original Bert model, we conduct the model training of \BertMWE in an \textit{incremental} fashion:
 we first follow the best training settings for each different variant of the Bert model  to train the basic model for a specific downstream task; after that, we start to train the corresponding \BertMWE 
-for the Bert variant, and use the trained weighted of base Bert model for that task to initialize the \BertMWE model. In other words, the pre-trained weights of \BertMWE come from the corresponding Bert model without MWE.
+for the Bert variant, and use the trained Bert model to initialize the \BertMWE. In other words, \BertMWE only changes the original Bert model with addition MWE structure, but retains all the trained weights.
 
 \noindent \textbf{Model variants}
-we apply the \BertMWE approach over the two different variants of the original Bert as proposed in \cite{devlin2018bert}: the Bert-Finetune as described in Section 3.5 of \cite{devlin2018bert}, where we use the pretrained weights as initialization, and fine-tune the model end to end, and the Bert-Feature, where we freeze the pretrained the model weights and use the outputted hidden states as feature to train a specific classification head. We also 
-explore two different version of applying the non-compositionality information.
-The first is the theoretically sounded \BertMWE, which fully follows the variational inference procedure and learns a distribution of possible Bert models, as shown in \autoref{sec:var-param}; the second is a simplified version of \BertMWE, 
-which do not explicitly utilize the inference, and only concat the MWE with the original single word based input. However, it may implicitly conduct inference over the importance of multiword expressions by dynamically scale their inputted embedding to the downstream network.
+We apply the \BertMWE approach over the two different variants of Bert model as proposed in \cite{devlin2018bert}: the Bert-Finetune model where we use the pretrained weights as initialization, and fine-tune all layers of the model end to end; and the Bert-Feature model, where we freeze the pretrained  model weights and use the outputted hidden states as feature to train a task specific prediction head. 
+
+We also 
+explore two different variants of applying the non-compositionality.
+The first is the theoretically sounded \BertMWE, which fully follows the variational inference procedure and learns a distribution over all possible models for prediction, as shown in \autoref{sec:var-param}; The second is a simplified version, 
+ \BertMWE (Simplified), 
+which do not add the \textit{MWE Dropout} layer to the network to explicitly utilize variational inference. 
+However, it may still conduct inference over the importance of multi-word expressions to some extent by dynamically scale their inputted embedding to the downstream network.
 
 \subsection{Text modeling} \label{sec:dataset}
-We first evaluate the proposed approach on how well it can model the text data itself, without using any supervision signal.
-Specifically, we construct the training and evaluation set by following the construction of masked language model and next sentence prediction task in the orignal Bert model \cite{devlin2018bert}, and additionally, to make the competition fair with basic Bert models, 
-we will discard from the input any MWEs that has overlap with the masked position. 
-Any training instances whose token masked is included in the evaluation dataset is discarded.
+We first evaluate the proposed approaches on on the task of modeling text data.
+Specifically, we follow the construction of masked language model and next sentence prediction task \cite{devlin2018bert} to create our training and additionally a separate evaluation set, 
+which shares no overlap with the training set. 
+To make the competition fair with original Bert models, 
+we will discard from the input text any MWEs that has overlaps with the masked position. 
 
-Both the training objective function and the evaluation metric of this task will be the sum of the  masked language model objective and next sentence prediction objective, which is computed as the sum of the mean masked LM likelihood and mean next sentence prediction likelihood
 
-We have evaluated our approach over the following corpus covering several different domains, as listed below.
-The dataset statistics are shown in \autoref{tab:dataset}. 
+We evaluate our approach over the following corpus. The dataset statistics are shown in \autoref{tab:dataset}. 
 
 
 \begin{table*}[thbH]
@@ -167,7 +170,7 @@ Datasets                                  & Training strategy                & M
 \midrule
 \bottomrule
 \end{tabular}
-\caption{Experimental Results on text modeling}
+\caption{Experiment results on text modeling}
 \label{tab:text_modeling}
 \end{table*}
 
@@ -184,119 +187,73 @@ Datasets                                  & Training strategy                & M
 % The statistics of these datasets are summarized in Table S1, and the details are described below.
 
 \noindent \textbf{Sample Text} 
-We first test the validity of our approaches over a simple 30-sentence corpus
-obtained from the commonly adopted Pytorch implementation of Bert repository \footnote{\url{https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/samples/sample_text.txt}}.
+We first verify our approaches over a simple 30-sentence corpus
+obtained from the widely adopted Pytorch implementation of Bert repository \footnote{\url{https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/samples/sample_text.txt}}.
 
 
 \noindent \textbf{Sample Large}
 The Sample Large corpus is also provided by Pytorch Bert repository  \footnote{\url{https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/samples/sample_text.txt}}
-which consists of about 500K natural language text to test the validity of our approaches in a large scale setting.
+which consists of about 500K natural language text to evaluate of our approaches in a large scale setting.
 \footnote{\url{https://ext-bert-sample.obs.eu-de.otc.t-systems.com/small_wiki_sentence_corpus.txt}}
 
 \noindent \textbf{WikiText-2} 
-The WikiText-2 corpus is a cleaned Wikipedia corpus proposed by Merity et.al \cite{merity2016pointer} as a standard benchmark for language model in the general domain. 
-Although larger version of the Wikipedia corpus exists, we adopt the WikiText-2 as the benchmark because the model is already initialized with the weights pretrained from the entire Wikipedia \cite{devlin2018bert} and therefore introduciing larget training corpus will not provide much more information.
+The WikiText-2 corpus is a cleaned Wikipedia corpus proposed by Merity et.al \cite{merity2016pointer} as a standard benchmark for language modeling in the general domain. 
+
+\noindent \textbf{Arxiv Computer Science} We evaluate our approaches for modeling text from technical domains, 
+which is obtained by collecting the titles and abstracts of 70K papers from the open access repository \url{arxiv.org} under the top level category of computer science from the year of 2008 to 2018. 
 
 
-\noindent \textbf{Arxiv Computer Science} We evaluate the performance of our approaches for modeling text for technical domains, which obtained by crawling titles and abstracts of 70K the papers from the open access repository \url{arxiv.org} under the top level category of computer science from 2008 to 2018. 
-
-
-\noindent \textbf{Arxiv Maths} We also collect another dataset from the repository \url{arxiv.org}, which is obtained by crawling about 65K paper abstracts from \url{arXiv.org}, under the top level category "mathematics". 
-
+\noindent \textbf{Arxiv Maths} 
+We evaluate our approach over another 
+technical domain, by collecting the titles and abstracts of 65K papers  from \url{arXiv.org}, under the top level category "mathematics". 
 
 \subsection{Supervised label prediction}
-we next evaluate the proposed approaches over an array of tasks that will take the text as input and learn to predict additional supervision labels to solve downstream analytical tasks. 
-For this we follow the standard the benchmark setting of 
-General Language Understanding Evaluation \cite{wang2018glue}, which is a collection of many supervised label prediction tasks for natural language text.
-Since GLUE does not distribute labels for the Test set and original evaluation was measured on the dev set \cite{devlin2018bert}, we use the evaluation metrics on the dev set as the Test performance. 
+we then evaluate the proposed approaches over an array of tasks that will take the text as input and learn to predict additional supervision labels to solve downstream analytical tasks. 
+For this we follow the standard setting from 
+General Language Understanding Evaluation (GLUE) \cite{wang2018glue}, which is a collection of many supervised label prediction tasks for natural language text.
+Since GLUE does not distribute labels for the Test set and original evaluation was measured on the dev set \cite{devlin2018bert}, we use the dev set' evaluation results as the performance metric.
 Specifically, we choose to evaluate our methods over the following dataset.
 
-\noindent \textbf{CoLA} The Corpus of Linguistic Acceptability is a binary classification task for binary text classification,
-where given a single sentence, the goal is to predict whether it is grammatically acceptable. We follow the author \cite{wang2018glue} to use Mathews correlation coefficient as the evaluation metric.
+\noindent \textbf{CoLA} The Corpus of Linguistic Acceptability is a binary classification task where given a single sentence, the goal is to predict whether it is grammatically acceptable. We follow the author \cite{wang2018glue} and use Mathews correlation coefficient as the evaluation metric.
 
 \noindent \textbf{MRPC} The Microsoft Research Paraphrase Corpus is a collection of sentence pairs from online news sources for paraphrase detection. Given a pair of sentence, the goal is to predict whether they are semantically equivalent. 
-Because the classes are imbalanced, the author \cite{wang2018glue} suggest to use both accuracy and F1 score.
+Because the classes are imbalanced, we use both accuracy and F1 score as the performance metric.
 
 
-\noindent \textbf{QQP} The Quora Question Pairs dataset is another text similarity  dataset consisting of pair of questions from Quora, which follows the same from as \textbf{MPRC}. It also has imbalanced classes and therefore both accuracy and F1 score are reported.
+\noindent \textbf{QQP} The Quora Question Pairs dataset is another text similarity dataset consisting of pairs of questions from Quora, which follows the same format as \textbf{MPRC}. It also has imbalanced classes and therefore both accuracy and F1 score are reported.
 
 
 \noindent \textbf{STS-B} 
-The Semantic Textual Similarity Benchmark is a yet another paraphrase detection dataset from news headlines,  video and image captions and natural language inference data. Given a pair of sentence, the goal is to predict a score from 1 to 5 measuring the strength of their semantic similarity. The author \cite{wang2018glue} suggest to use Pearson and Spearman correlation coefficients as the performance measure.
+The Semantic Textual Similarity Benchmark is yet another paraphrase detection dataset from news headlines,  video and image captions for natural language inference. Specifically, given a pair of sentence, the goal is to predict a score from 1 to 5 measuring the strength of their semantic similarity. We use Pearson and Spearman correlation coefficients as the performance metric.
 
 
-\noindent \textbf{MNLI} The Multi-Genre Natural Language Inference dataset is a crowdsourced collections of entailment classification data collected by William et.al. \cite{williams2017broad}. 
-Given a pair of sentences, the goal is to predict whether the first sentence (premise) entails or contradicts the second sentence(hypothesis), or neither of the above.
+\noindent \textbf{MNLI} The Multi-Genre Natural Language Inference dataset is a crowdsourced collection of entailment classification data collected by William et.al. \cite{williams2017broad}. 
+Given a pair of sentences, the goal is to predict whether the 
+second sentence (hypothesis) is an entailment or contradiction of the first one (premise), or it is neither of the above.
 
 \noindent \textbf{QNLI} The Question Natural Language Inference dataset is a converted version of the Stanford Question Answering Dataset where given a pair of question and sentence, the goal is to predict whether the sentence contains the answer to the question.
 
-\noindent \textbf{RTE} The Recognizing Textual Entailment dataset is a collection of entailment dataset in the same form as \textbf{MNLI} constructed based on news and Wikipedia.
+\noindent \textbf{RTE} The Recognizing Textual Entailment dataset is a collection of text entailment dataset constructed from on news and Wikipedia and is formatted the same way as \textbf{MNLI} .
 
-\noindent \textbf{WNLI} The Winograd Natural Language Inference dataset is converted from Winograd Schema Challenge whetre goal is to determine the the referent of pronouns in the given sentence. Given a input pair of sentence, the goal is predict whether the second sentence is equivalent to the first one, by replacing the pronoun with the correct referent.
+\noindent \textbf{WNLI} The Winograd Natural Language Inference dataset is converted from Winograd Schema Challenge where the goal is to determine the referent of the pronouns in the given sentence. Given an input pair of sentence, the goal is to predict whether the second sentence is equivalent to the first one, i.e. by replacing the pronoun with the correct referent.
 
 
 
 
 \subsection{Performance evaluation}
 \noindent \textbf{Text modeling}
-We first evaluate our approach over the task of modeling the text, under the Bert-pretraining objective \cite{devlin2018bert}, the results are shown in \autoref{tab:text_modeling}. We omit the the \BertMWE-simple model for clearity because it generate similar performance with the \BertMWE, possibly because it can scale its embedding parameters to simulate the dropout behavior.
-We can see from the results that \BertMWE model is able to efficiently utilize the training set, (by reducing the training error), while at the same time significantly reduce the loss on evaluate set on most of the benchmarks. Another observation is that, the \BertMWE, when it achieves similar performance over the evaluation, it also behaves similarly on the training set. In other words, adding the additional will mostly not lead to overfitting, and in many cases, let the model learn better structure of the data.
+We first evaluate our approach over the task of modeling the text, under the Bert-pretraining objective \cite{devlin2018bert}, the results are shown in \autoref{tab:text_modeling}. We omit the \BertMWE (Simplified) model for clearity because it generate similar performance with the \BertMWE, possibly because it can scale its embedding parameters to simulate the dropout behavior.
+We can see from the results that \BertMWE model is able to efficiently utilize the training set, (by reducing the training error), while at the same time significantly reduce the loss on evaluation set on most of the benchmarks. 
+The reduction in training and evaluation loss is always in sync with the \BertMWE model, which further confirms that the additional  complexity in \BertMWE compared to Bert model does lead to over-fitting, and in many cases, lets the model learn better structure of the data.
 
 \noindent \textbf{Supervised label prediction}
-We evaluate our approach over the task of predicting the external supervised labels, as shown in table \autoref{tab:glue_results},
-where we list the performance of each several Bert based models along with several additional methods results obtained from the Glue online benchmark to serve as reference.
-We can see the \BertMWE is able to build upon the already very strong Bert base model, and achieve statistically significant improvement over a wide range of tasks, and outperform other strong baseline methods.
+We evaluate our approaches over the task of predicting the external supervised labels, as shown in table \autoref{tab:glue_results},
+where we list the performance for the Bert based models along with several additional baseline methods whose results are obtained from the Glue online leaderboard \footnote{\url{https://gluebenchmark.com/leaderboard/}}.
+We can see that \BertMWE is able to build upon the already very strong Bert base model, and achieve statistically significant improvement over a wide range of tasks, and outperform other strong baseline methods.
 
 
 
 
 
 \subsection{Case study}
-
-
-
-
-
-
-To provide further insights about the learning process, we present the learning curve and evaluation curve for the text modeling datasets used in the performance evaluation, as shown in \autoref{fig:learning-curve}, from which we can clearly see that adding the additional structure \BertMWE gives significant impact over the base Bert model, through better exploitation of the training data as well as a significantly better generalization error.
-
-
-
-
-\nop{
-\noindent \textbf{Interpretation of MWE weights}
-By inspecting the model weights, we can derive better,
-intuitively, MWEs associated with high weights and less dropout 
-valid
-critical to the task
-The results are shown in \autoref{table-top-concepts} shows some of the most discriminative \& indiscriminative MWEs. We can see that the concept representation of taxonomy nodes is able to capture latent semantics and make meaningful distinctions on the concept level.
-
-
-
-
-
-\begin{table}
-\centering
-
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{c|c|c} \hline
-\multirow{2}{*}{} & \multicolumn{2}{c}{Concepts} \\ \cline{2-3} & discriminative & indiscriminative \\ \hline
-\multirow{3}{*}{\it{\textbf{Computer Science}}} & \it{fpga (Hardware)} & \it{framework} \\ & \it{nash 
-equilibria (Game Theory)} & \it{goal} \\ & \it{attacks (Security)} & \it{technique} \\ \hline
-\multirow{3}{*}{\it{\textbf{Physics & Maths}}} & \it{entanglement (Quantum Physics)} & \it{correspondance} \\ & \it{Jupyter (Planet astrophysics)} & \it{metric} \\ & \it{complete graph  (Combinatorics)} & \it{series} \\
-\hline
-\multirow{3}{*}{\it{\textbf{Medicine}}} & \it{MRI (Diagnosis)} & \it{levels} \\ & \it{treatment (Therapeutics)} & \it{ability} \\ &  \it{HIV (Viruses)} & \it{regression} \\ \hline
-\end{tabular}
-}
-\vspace{3pt}
-\caption{Example discriminative vs indiscriminative concepts discovered in each dataset}
-\vspace{-10pt}
-\label{table-top-concepts}
-\end{table}
-
-}
-
-
-
-
-
+To provide further insights about the learning process, we visualize the learning and validation curve for the text modeling datasets used in the performance evaluation, as shown in \autoref{fig:learning-curve}. We can see from the results that, incorporating the additional structure of \BertMWE gives significant impact over the base Bert model, by better exploiting of the training data to greatly reduce the training error, while at the same time generalizing well to the unseen data and keeping the performance in evaluation dataset in sync.

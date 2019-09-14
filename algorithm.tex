@@ -1,21 +1,20 @@
-\subsection{efficient approximate inference}\label{sec:approximate-inference}
-
+\subsection{Efficient approximate inference}\label{sec:approximate-inference}
 
 In order to evaluate the derivative and optimize the ELBO (see \autoref{eq:elbo0}) without exact integration over the latent variables, 
 we resort to sampling based methods 
-that approximate the derivative value by drawing samples from the variational distribution \cite{ranganath2014black}. 
+that approximate the derivative value by drawing random samples from the variational distribution \cite{ranganath2014black}. 
 However, directly sampling from the distribution, e.g. through stochastic gradient variational bayes  \cite{rezende2014stochastic} might be hard due to high variance in the estimated gradients and the sheer amount of latent variables \cite{kingma2015variational}.
 We instead leverage the local re-parameterization trick \citep{Kingma2015} to  
 decompose the global sample uncertainty in the model weights into local noise, and remove the correlation between samples in the mini-batch.
 
-Another challenge is that, because the generation process follows a Bernouli distributions, 
+Another challenge is that, because the generation process follows a Bernouli distribution, 
 which is discrete and thus block the back-propagation from the estimated likelihood, 
 it is very hard for us to obtain gradients about the variational parameters and re-adjust the distribution. 
 One possible approach is to relax the discrete distribution into a continuous, Gaussian distribution \cite{wang2013fast, chen2019large}. However, these two families of distributions are of very different nature and 
-requires significant hand tuning such as truncating in order  to prevent the computation from diverging, and in practice cause the model to underperform \cite{molchanov2016dropout}, not to mention that fact the computation error could accumulate as the number of layers increases, and more  approximation is applied for each layer. 
+requires significant hand-tuning such as truncating in order  to prevent the computation from diverging, and in practice cause the model to underperform \cite{molchanov2016dropout}, not to mention that fact the computation error could accumulate as the number of layers increases, and more  approximation is applied to each layer. 
 
-To remedy this, we adopt the Gumbel-Max trick \cite{gumbel1954statistical, gummaddison2014sampling} as the continuous relaxation of the bernoulli distribution
-and %follow Jang. et.al. \cite{jang2016categorical} to use the softmax function as a continuous relaxation to 
+To remedy this, we adopt the Gumbel-Max trick \cite{gumbel1954statistical, gummaddison2014sampling} as the continuous relaxation of the Bernoulli distribution
+and 
 make the sample differentiable with respect to the variational parameter. 
 Specifically, the continuous relaxation to Bernoulli distribution with mean parameters $p$ can be parameterized as
 \begin{equation}
@@ -23,7 +22,7 @@ Gumble_{t}( \tilde{\beta} | p) = t \left( \frac{p}{\tilde{\beta}^t} + \frac{1 - 
 \frac{p}{\tilde{\beta}^{(t + 1)}} \frac{1 - p}{(1 - \tilde{\beta})^{(t + 1)}}  
 \\
 \end{equation}
-where $t$ is the "temperature" parameter that controls how close the continuous relaxation is to the Bernoulli distribution, when it approach 0, the resulted $y$ recovers the original Bernoulli distribution.
+where $t$ is the "temperature" parameter that controls how close the continuous relaxation is to the Bernoulli distribution: when it approach 0, the resulted $y$ recovers the original Bernoulli distribution.
 
 For Bernoulli random variable with mean parameter $\pi$, this amounts to drawing a uniform random variable  $u \sim \Unif (0, 1)$ and compute the sampled value $z$
  through a sigmoid function \cite{gal2017concrete}
@@ -47,9 +46,9 @@ Denoting $ \tilde{Q} (\Theta | W, \Pi, \{\pi_i | i \in V\})$ as the re-parameter
 the expected conditional log likelihood for the observed data $\mathcalD$ can then be re-written as
 \begin{align}
 & \mathbb{E}_{\tilde{\Theta} \sim \tilde{Q}} \log P (\mathcalD | \tilde{\Theta}) \nonumber\\ 
-= & \sum_{x, y \in \mathcalD} \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta_{Bert-MWE}} Gumble(\tilde{B} | \Pi) \prod_i^{V} \log ( Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
-& \quad \quad \quad \quad p(\Theta_{Bert-MWE} \vert W, B, \{\beta_i, i \in V\}) \nonumber\\ 
-& \quad \quad \quad \quad p(y \vert f^{\Theta_{Bert-MWE}}(x)) )
+= & \sum_{x, y \in \mathcalD} \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta} Gumble(\tilde{B} | \Pi) \prod_i^{V} \log ( Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
+& \quad \quad \quad \quad p(\Theta \vert W, B, \{\beta_i, i \in V\}) \nonumber\\ 
+& \quad \quad \quad \quad p(y \vert f^{\Theta}(x)) )
 \label{eq:exp-gumble}
 \end{align}
 
@@ -64,9 +63,9 @@ Our goal now becomes, to optimize the evidence lower bound indicated by the abov
 The first term in the ELBO refers to the expected conditional log likelihood of the data, as defined in \autoref{eq:exp-gumble}, 
 and the second term is the KL divergence between the new variational distribution $\tilde{Q} ( \tilde{\Theta})$ 
 and a predefined prior distribution  $\mathcal{P}( \tilde{\Theta})$.
-Although we can obtain the its via value analytical formula or Monte Carlo sampling \cite{gal2016uncertainty}, 
-we ignore this term in practice because it is of $O(N)$ orders of magnitude smaller than the expected conditional likelihood of likehood, with $N$ being the amount of data to train the model. 
-This is especially true when we can train the models weights using very large amount of training instances, e.g. using the language modeling objective \cite{devlin2018bert}.
+Although we can obtain its value via analytical formula or Monte Carlo sampling \cite{gal2016uncertainty}, 
+we ignore this term in practice because it is of $O(N)$ orders of magnitude smaller than the expected conditional likelihood, with $N$ being the size of data to train the model. 
+This is especially true when we can train the model's weights using very large amount of training instances, e.g. with the language modeling objective \cite{devlin2018bert}.
 
 
 
@@ -76,10 +75,12 @@ This is especially true when we can train the models weights using very large am
     \centering
     \includegraphics[width=0.95\linewidth]{fig/model_architecture.png}
     \vspace{20pt}
-    \caption{Illustration of the \BertMWE network architecture. mwe dropout is applied at each level of architecture, as a result,
-    if dropout is zero, will completelty dropout the entire ff need, not just one single layer
-    . reduce back to original structure.  If kept will be treated the same.
-    interference can be limited to only low level embedding layers, }
+    \caption{Illustration of the \BertMWE network architecture. 
+The \textit{MWE Dropout} is repetitively applied to the input vector representations of each self attention layer. 
+If dropout out ratio is zero, the entire network architecture corresponding to that MWE unit will be dimmed out, 
+effectively reducing network back to the original structure without that MWE. On the other hand, if the dropout ratio is one, 
+ the effect of that MWE will be completely preserved as if not no dropout is applied.
+}
     \vspace{10pt}
     \label{fig:architecture-mwe-dropout}
 \end{figure}
@@ -88,21 +89,19 @@ This is especially true when we can train the models weights using very large am
 
 \subsection{Network architecture}
 Finally, we describe the details of the network architecture design to fully specify the model parameters. 
-The challenge is that, by relaxing the Bernoulli distribution to the continuous Gumbel-Max, we can no longer 
-treat the selection of MWEs as black or white decisions
+The challenge is that, by relaxing the Bernoulli distribution to the continuous Gumbel-Max, we can no longer treat the selection of MWEs as black or white decisions
 and the non-compositionality inference scheme needs to 
 be dynamically integrated into the model architecture at multiple levels. 
 
 Our proposed architecture is shown in \autoref{fig:architecture-mwe-dropout}. 
 Given one instance of input text, the first step is to pass the text into the \textit{Input Embedding} layer to transform the tokens into vector representations to feed into downstream neural networks.
-For single word embedding, this amounts to combining the token embedding, position embedding and sentence level information altogether into 
-a set of vector representation
+For single word embedding, this amounts to combining the token embedding, position embedding and sentence level information altogether into a set of vector representation
 corresponding to each token. For this we follow the exact original implementation as in \cite{devlin2018bert}.
 
 In addition to embedding single words, 
 we also pass the input into \textit{MWE embedding}, and similarly generate a set of vector representation 
 by following the procedure described in  \autoref{sec:arch-overview}, which is passed through the \textit{Concat} layer to be 
-concantenated with the vector representations  from single words.
+concatenated with the vector representations from single words.
 
 In addition, according to the variational inference scheme we specified \autoref{sec:arch-overview}, 
 we will also generate the 
@@ -112,43 +111,46 @@ We then apply $B, \{\beta_i\}$ to their associated MWEs. Simply applying them to
 This is because 
 the partially dimmed out MWE embedding will affect downstream network architectures beyond the input level, which may cause the network to eventually diverge from the desired output.
 
+%that dropout the a set of related weights across the entire neural networks, simultaneously controlled by the same sampled dropout ratio.
 
-downstream network architecture  has changed due to the addition of the input, eventually diverge 
 
-the addition of the MWE, and that the 
-due to the addition 
-according to the input embedding dimension, 
-and may further and further as the input is passed through the whole network.
+To address this, we propose a novel approach for applying these variational parameters, called "deep dropout", that not only apply the dimming effect on the input level, but also repetitively 
+at the corresponding positions for the downstream network levels, simultaneously controlled by the same "dimming ratio".
 
-a simple dropout over the embedding matrix 
-
-A simple dropout over the the embedding matrix is not sufficient, 
-
-To remedy this we propose a novel dropout scheme called "tied architectural dropout", that dropout the a set of related weights across the entire neural networks, simultaneously controlled by the same sampled dropout ratio.
-Specifically, we apply an MWEDropout layer 
-before each of the repeated transformer blocks\cite{devlin2018bert}
-to implement the selection of MWEs, where the characteristic "dropout" ratio are used to scale down the hidden states for the corresponding MWEs, and the hidden states for single words are left intact.  
-Specifically, we compute MWEDropout from the input hidden states $\mathbf{H}$ and the MWE dropout ratio $\bm{\beta}$. 
-The output can be specified as 
-\begin{equation}
-   \mathrm{MWEDropout}(\mathbf{H}, \mathbf{\beta}) =  diag([\bm{{\mathbbm{1}}}_n \vert \bm{\beta}]) \cdot \mathbf{H}
+Specifically, we apply a \textit{MWE Dropout} to 
+the input vector representations of each network layer, before any further operation, where the variational parameter $B, \{\beta_i\}$ are used as 
+the ``dropout" ratio to be applied multiplicatively into the vector representations.
+If we denote the input vector representation as a matrix $\mathbb{E}$, and the corresponding dropout ratio as $\vec{\beta}$, 
+the output of the \textit{MWE Dropout} $f(\mathbb{E}, \vec{\beta})$ can be specified as 
+\begin{equation} \label{eq:MWEDropout}
+   f(\mathbb{E}, \vec{\beta}) =  diag(\bm{\beta}) \cdot \mathbb{E}
 \end{equation}
-where $\bm{{\mathbbm{1}}}_n$ denotes an $n$ dimensional vector filled with 1s.
+By applying the MWE-Dropout layer before every operation in the same self attention layer, including the 
+\textit{Multi-Head Attention}, \textit{Add & Norm}, \textit{FeedForward} and another \textit{Add & Norm}, layer, as in \cite{vaswani2017attention}, 
+we are effectively removing the MWE embedding by the  desired ratio:
+If dropout out ratio is zero, the entire network architecture corresponding to that MWE unit will be dimmed out from each layer of the network,
+effectively reducing the network back to the original structure without that MWE;
+If the dropout ratio is one, the effect of that MWE will be completely preserved as if there is no dropout is applied.
+If the ratio is between zero and one, 
+the dimming effect will be applied repetitively to all network layers, jointly changing the behavior of the entire network.
 
-The MWE-Dropout layer is then followed by the Multi-Head Attention, LayerNorm, FeedForward and another LayerNorm layer, for each transformation block, exactly as in the original architecture \cite{vaswani2017attention}. This newly grouped Bert-MWE transformer block, is then stacked repeatedly for $N$ times and finally fed into donwstream prediction heads, in the exact same way as \cite{devlin2018bert}.
+This newly grouped self attention block, consisting of the original self attention layer as well as the \textit{MWE Dropout} layer, is then stacked repeatedly for $N$ times, and finally fed into the donwstream task-specific prediction heads, also following the original implementation \cite{devlin2018bert}.
 
 
-\subsection{Prediction} \label{sec:prediction}
-The goal of variational inference is to obtain the hyper-paramters governing $\Pi, \{\pi_i \vert i \in V\}$ the as well as the mean-weights $W$ that jointly controls the probability distribution of model parameters $B, \{b_i \vert i \in V\}, \Theta_{Bert-MWE}$, the task now is to predict the target output given a new incoming input text $x$.
-Instead of performing  from a static point estimate of the model, we perform prediction by directly drawing samples from posterior predictive distribution.
+\subsection{Posterior Predictive Inference} \label{sec:prediction}
+The outcome of the variational inference is the set of parameters governing the variational distribution, and the now the task is to obtain the model prediction for a given input $x$.
+Instead of maximizing the variational distribution to predict a point estimate, i.e. maximum a priori, we perform Posterior Predictive Inference that comprehensively 
+consider the entire posterior predictive distribution in making the predictions.
 
 Specifically, the posterior predictive distribution of $y$ under the variational distribution $\tilde{Q}$ can be obtained by computing the expectation of the model parameters $\tilde{\Theta}$ under all possible model settings
 \begin{align}
 & \mathbb{E}_{\tilde{\Theta} \sim \tilde{Q}} P (y | x, \tilde{\Theta}) \nonumber\\ 
-= & \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta_{Bert-MWE}} Gumble(\tilde{B} | \Pi) \prod_i^{V} Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
-& \quad \quad \quad \quad \quad \quad \quad \quad p(\Theta_{Bert-MWE} \vert W, B, \{\beta_i, i \in V\}) \nonumber\\ 
-& \quad \quad \quad \quad \quad \quad \quad \quad p(y \vert f^{\Theta_{Bert-MWE}}(x)) 
+= & \int_{\tilde{B}} \int_{\tilde{\beta}_i}\int_{\Theta} Gumble(\tilde{B} | \Pi) \prod_i^{V} Gumble(\tilde{\beta}_i | \pi_i) \nonumber\\ 
+& \quad \quad \quad \quad \quad \quad \quad \quad p(\Theta \vert W, B, \{\beta_i, i \in V\}) \nonumber\\ 
+& \quad \quad \quad \quad \quad \quad \quad \quad p(y \vert f^{\Theta}(x)) 
 \label{eq:prediction}
 \end{align}
 
-In terms of neural network architecture, this amounts to keeping the exact same Gumble-softmax sampling operation (\autoref{eq:gumbel-sample}) and the same behavior of the MWE dropout layer during both training and inference stage. Intuitively, this is because the learned model distribution are shared across the training and inference.
+We provide an efficient sampling scheme:
+at test time,
+we use the exact same Gumble-softmax sampling operation (\autoref{eq:gumbel-sample}) and keep the same behavior for the \textit{MWE Dropout} layer (\autoref{eq:MWEDropout}) as in the training stage to pass the input through, and use the model output as the sample from the posterior predictive distribution.

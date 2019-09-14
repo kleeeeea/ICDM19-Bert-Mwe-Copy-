@@ -175,16 +175,15 @@ Bert-Mwe: a variational approach for non-compositionality inference in deep self
 
 
 \begin{abstract}
-The recent emergence of multi-level deep self attention neural network has revolutionized the way we model text data and use it for downstream analytical tasks. 
+The recent emergence of multi-level deep self-attention neural network has revolutionized the way we model text data and use it for downstream analytical tasks. 
 It works by first breaking text into single words or word pieces, 
-and learning deep representation of the text based on the deep composition.
-However, natural languages are not always compositional.
+and learning vector representation of the text through deep composition.
+However, natural languages are not always compositional, 
 in that many important concepts usually correspond to atomic multi-word  expressions (MWE) such as 
 idioms such as ”dog day”, named entities such as ”Palo Alto”, and technical terminologies such as ”support vector machine”,
 whose meanings can not be decomposed into single word tokens and thus will be missed by the deep self-attention neural network.
 In this work, we propose \BertMWE, a  principled probabilistic framework that combines the best of the deep self attention network architecture and natural language non-compositionality, 
 by infusing the neural network with additional multi-world expression, and dynamically inferring their best combination via variational inference. Experiments demonstrated the effectiveness of our approach over the state of the art baseline models across a wide range of language modeling and understanding evaluation benchmarks. 
-Experiments demonstrated the effectiveness of our approach over the state of the art baseline models across a wide range of text modeling and downstream analytical tasks.
 \end{abstract}
 
 
@@ -195,16 +194,14 @@ Experiments demonstrated the effectiveness of our approach over the state of the
 \input{exp}
 
 
-\section{Conclusion}
+\section{Conclusion}\label{sec:bert_mwe_conclusion}
 In this work, 
-we propose a principled probablistic framework \BertMWE that builds upon the state of the art 
-model for processing text, 
-deep self attention network architecture, 
-to incorporate the modeling power of the deep self attention network architecture as well as the rich information contained in natural language non-compositionality, 
-through a mechanism of 
-dynamically adjusting the deep self attention network architecture to inject the non-compositionality information, 
-under the variantional inference framework. We performed extensive experiments over a large range of tasks and demonstrated that our approach build up upon the state of the art Bert model and can bring additional significant improvement.
-Many future work exists. For example, how can we effectively mine concepts that are best for improve the network performance, in a end-to-end manner? Moreover, how can incorporte further linguistic structure into the network, to make the architecture richer and more meaningful, while keep pushing the boundary in terms of performance? These are all very interesting directions to explore in the future.
+we propose a principled probabilistic framework \BertMWE that builds upon the state of the art 
+deep self attention network architecture for processing text, 
+and combine the best of the modeling power of the deep self attention network architecture with the rich information contained contained in natural language non-compositionality, 
+under the variational inference framework. 
+We performed extensive experiments over a large range of tasks and demonstrated that our approach builds up upon the state of the art Bert model and can bring consistent improvement.
+Many future work exists. For example, how can we effectively mine concepts that are best for improving the network performance, in a end-to-end fashion? Moreover, how can we best incorporate more advanced linguistic structure into the network, to make the architecture richer and more meaningful, while keep pushing the boundary of performance? These are all very interesting directions to explore in the future.
 
 
 
